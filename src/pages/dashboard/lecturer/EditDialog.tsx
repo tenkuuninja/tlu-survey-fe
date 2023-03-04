@@ -8,6 +8,8 @@ import {
     FormLabel,
     TextField,
     Grid,
+    MenuItem,
+    Select,
   } from '@mui/material'
   import { useFormik } from 'formik'
   import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
@@ -32,7 +34,7 @@ import {
       value: 'female',
       label: 'f',
     },
-]
+];
   const EditDialog = ({ open, onClose, data, onSuccess }) => {
     const isUpdate = !!data
   
@@ -116,22 +118,18 @@ import {
               <Grid item md={6}>
                 <FormControl fullWidth>
                   <FormLabel>Giới tính</FormLabel>
-                  <TextField
+                  <Select
                     size="small"
                     name="sex"
                     value={formik.values.sex}
                     onChange={formik.handleChange}
                     error={!!formik.errors.sex}
-                    helperText={formik.errors.sex}
                     placeholder="Nhập giới tính của bạn"
                     fullWidth
                   >
-                    {gender.map((Option) =>(
-                        <option key={Option.value} value={Option.value}>
-                        {Option.label}
-                      </option>
-                    ))}
-                </TextField>
+                  <MenuItem value={'male'}>Nam</MenuItem>
+                  <MenuItem value={'female'}>Nữ</MenuItem>
+                </Select>
                 </FormControl>
               </Grid>
               <Grid item md={6}>
