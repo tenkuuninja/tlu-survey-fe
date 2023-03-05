@@ -17,6 +17,11 @@ const validationSchema = yup.object({})
 
 const initialValues = {
   username: '',
+  email: '',
+  phone: '',
+  sex: '',
+  role: '',
+  status: '',
 }
 
 const EditDialog = ({ open, onClose, data, onSuccess }) => {
@@ -49,82 +54,82 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                   onChange={formik.handleChange}
                   error={!!formik.errors.username}
                   helperText={formik.errors.username}
-                  placeholder="Nhập họ tên của bạn"
+                  placeholder="Nhập họ tên"
                   fullWidth
                 />
               </FormControl>
             </Grid>
             <Grid item md={6}>
               <FormControl fullWidth>
-                <FormLabel>Họ tên</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <TextField
                   size="small"
-                  name="username"
-                  value={formik.values.username}
+                  name="email"
+                  value={formik.values.email}
                   onChange={formik.handleChange}
-                  error={!!formik.errors.username}
-                  helperText={formik.errors.username}
-                  placeholder="Nhập họ tên của bạn"
+                  error={!!formik.errors.email}
+                  helperText={formik.errors.email}
+                  placeholder="Nhập email"
                   fullWidth
                 />
               </FormControl>
             </Grid>
             <Grid item md={6}>
               <FormControl fullWidth>
-                <FormLabel>Họ tên</FormLabel>
+                <FormLabel>Số điện thoại</FormLabel>
                 <TextField
                   size="small"
-                  name="username"
-                  value={formik.values.username}
+                  name="phone"
+                  value={formik.values.phone}
                   onChange={formik.handleChange}
-                  error={!!formik.errors.username}
-                  helperText={formik.errors.username}
-                  placeholder="Nhập họ tên của bạn"
+                  error={!!formik.errors.phone}
+                  helperText={formik.errors.phone}
+                  placeholder="Nhập số điện thoại"
                   fullWidth
                 />
               </FormControl>
             </Grid>
             <Grid item md={6}>
               <FormControl fullWidth>
-                <FormLabel>Họ tên</FormLabel>
+                <FormLabel>Giới tính</FormLabel>
                 <TextField
                   size="small"
-                  name="username"
-                  value={formik.values.username}
+                  name="sex"
+                  value={formik.values.sex}
                   onChange={formik.handleChange}
-                  error={!!formik.errors.username}
-                  helperText={formik.errors.username}
-                  placeholder="Nhập họ tên của bạn"
+                  error={!!formik.errors.sex}
+                  helperText={formik.errors.sex}
+                  placeholder="Nhập giới tính"
                   fullWidth
                 />
               </FormControl>
             </Grid>
             <Grid item md={6}>
               <FormControl fullWidth>
-                <FormLabel>Họ tên</FormLabel>
+                <FormLabel>Vai trò</FormLabel>
                 <TextField
                   size="small"
-                  name="username"
-                  value={formik.values.username}
+                  name="role"
+                  value={formik.values.role}
                   onChange={formik.handleChange}
-                  error={!!formik.errors.username}
-                  helperText={formik.errors.username}
-                  placeholder="Nhập họ tên của bạn"
+                  error={!!formik.errors.role}
+                  helperText={formik.errors.role}
+                  placeholder="Nhập vai trò"
                   fullWidth
                 />
               </FormControl>
             </Grid>
             <Grid item md={6}>
               <FormControl fullWidth>
-                <FormLabel>Họ tên</FormLabel>
+                <FormLabel>Trạng thái</FormLabel>
                 <TextField
                   size="small"
-                  name="username"
-                  value={formik.values.username}
+                  name="status"
+                  value={formik.values.status}
                   onChange={formik.handleChange}
-                  error={!!formik.errors.username}
-                  helperText={formik.errors.username}
-                  placeholder="Nhập họ tên của bạn"
+                  error={!!formik.errors.status}
+                  helperText={formik.errors.status}
+                  placeholder="Nhập trạng thái"
                   fullWidth
                 />
               </FormControl>
