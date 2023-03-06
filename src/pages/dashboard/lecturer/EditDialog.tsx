@@ -25,16 +25,6 @@ import {
     sex: '',
     status: '',
   }
-  const gender = [
-    {
-      value: 'male',
-      label: 'm',
-    },
-    {
-      value: 'female',
-      label: 'f',
-    },
-];
   const EditDialog = ({ open, onClose, data, onSuccess }) => {
     const isUpdate = !!data
   

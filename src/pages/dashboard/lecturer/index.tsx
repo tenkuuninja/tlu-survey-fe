@@ -74,13 +74,6 @@ const LecturerDashboardPage = () => {
           >
             <AiOutlineEdit />
           </IconButton>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => setLectureToDelete(row)}
-          >
-            <AiOutlineDelete />
-          </IconButton>
         </>
       ),
     },
