@@ -10,6 +10,7 @@ import LecturerDashboardPage from 'pages/dashboard/lecturer'
 import ClassDashboardPage from 'pages/dashboard/class'
 import SubjectDashboardPage from 'pages/dashboard/subject'
 import ChangePasswordDashboardPage from 'pages/dashboard/change-pasword'
+import DashboardPage from 'pages/dashboard/home'
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
     path: '/dashboard',
     element: <AdminLayout />,
     children: [
+      {
+        path: '/dashboard',
+        element: <DashboardPage />,
+      },
       {
         path: '/dashboard/survey',
         element: <SurveyDashboardPage />,
