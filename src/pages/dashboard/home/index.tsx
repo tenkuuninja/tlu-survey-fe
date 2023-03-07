@@ -1,7 +1,3 @@
-import {
-  Button,
-  IconButton,
-} from '@mui/material'
 import { Link } from 'react-router-dom'
 
 const DashboardPage = () => {

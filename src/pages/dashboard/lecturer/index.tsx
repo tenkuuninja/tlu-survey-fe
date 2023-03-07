@@ -66,15 +66,15 @@ const LecturerDashboardPage = () => {
     {
       name: 'Hành động',
       selector: (row) => (
-        <>
+        
           <IconButton
             size="small"
             color="info"
             onClick={() => setLectureToUpdate(row)}
           >
-            <AiOutlineEdit />
+          <AiOutlineEdit/>
           </IconButton>
-        </>
+        
       ),
     },
   ]
