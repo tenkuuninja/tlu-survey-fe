@@ -1,7 +1,7 @@
 import { IconButton, Button } from '@mui/material'
 import { useState, useEffect } from 'react'
 import DataTable from 'react-data-table-component'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
+import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
 import EditDialog from './EditDialog'
 
 const fakesgv = [...new Array(10)].map((item, i) => ({
@@ -83,6 +83,9 @@ const LecturerDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Giảng viên</h2>
+        <Button>
+        <AiOutlineSearch/>
+        </Button> 
         <Button onClick={() => setLectureToUpdate(null)}>
           <AiOutlinePlus /> Thêm
         </Button>

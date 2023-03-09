@@ -8,8 +8,9 @@ import {
   DialogActions } from '@mui/material'
 import { useState, useEffect } from 'react'
 import DataTable from 'react-data-table-component'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
+import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
 import EditDialog from './EditDialog'
+import ListStudentDialog from './ListStudentDialog'
 
 const fakesgv = [...new Array(10)].map((item, i) => ({
   id: i + 1,
@@ -25,7 +26,7 @@ const ClassDashboardPage = () => {
 
   const [classes, setClasses] = useState<any[]>([])
   const [classToUpdate, setClassToUpdate] = useState<any>(null)
-  const [classToDelete, setClassToDelete] = useState<any>(null)
+  const [listStudent, setListStudent] = useState<any>(null)
   const [classDeleteID, setClassDeleteID] = useState<any>(null)
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
   const handleFetchClass = () => {
@@ -87,6 +88,13 @@ const ClassDashboardPage = () => {
       selector: (row) => (
         <>
           <IconButton
+          size='small'
+          color='success'
+          onClick={()=> setListStudent(row)}
+          >
+          <AiOutlineEye/>
+          </IconButton>
+          <IconButton
             size="small"
             color="info"
             onClick={() => setClassToUpdate(row)}
@@ -109,6 +117,9 @@ const ClassDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Lớp học</h2>
+        <Button>
+        <AiOutlineSearch/>
+        </Button>   
         <Button onClick={() => setClassToUpdate(null)}>
           <AiOutlinePlus /> Thêm
         </Button>
@@ -116,6 +127,12 @@ const ClassDashboardPage = () => {
       <div>
         <DataTable data={classes} columns={columns} />
       </div>
+      <ListStudentDialog
+        open={!!listStudent}
+        onclose={() => setListStudent(null)}
+        data ={listStudent}
+        onSuccess={handleFetchClass}
+      />
       <EditDialog
         open={!!classToUpdate}
         onClose={() => setClassToUpdate(null)}
