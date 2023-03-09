@@ -25,7 +25,7 @@ const initialValues = {
 }
 
 const EditDialog = ({ open, onClose, data, onSuccess }) => {
-  const isUpdate = !!data
+  const isUpdate = !!data?.id
 
   const formik = useFormik({
     initialValues,

@@ -33,7 +33,7 @@ const ConfirmLogoutDialog = ({ open, onClose }) => {
           onClick={handleSubmit}
           startIcon={<AiOutlineLogout />}
         >
-          Đăng xuất
+          Đồng ý
         </Button>
       </DialogActions>
     </Dialog>

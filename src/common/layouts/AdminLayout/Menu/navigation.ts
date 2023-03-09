@@ -51,7 +51,7 @@ export default [
     ],
   },
   {
-    label: 'Account',
+    label: 'Tài khoản',
     children: [
       {
         label: 'Đổi mật khẩu',
@@ -59,7 +59,7 @@ export default [
         icon: AiOutlineKey,
       },
       {
-        label: 'Logout',
+        label: 'Đăng xuất',
         icon: AiOutlinePoweroff,
         action: 'logout',
       },

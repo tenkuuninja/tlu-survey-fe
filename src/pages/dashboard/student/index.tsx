@@ -19,7 +19,6 @@ const fakes = [...new Array(10)].map((item, i) => ({
 const StudentDashboardPage = () => {
   const [students, setStudents] = useState<any[]>([])
   const [studentToUpdate, setStudentToUpdate] = useState<any>(null)
-  const [studentToDelete, setStudentToDelete] = useState<any>(null)
 
   const handleFetchStudent = () => {
     setStudents(fakes)
@@ -73,13 +72,6 @@ const StudentDashboardPage = () => {
           >
             <AiOutlineEdit />
           </IconButton>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => setStudentToDelete(row)}
-          >
-            <AiOutlineDelete />
-          </IconButton>
         </>
       ),
     },
@@ -89,7 +81,7 @@ const StudentDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Sinh viên</h2>
-        <Button onClick={() => setStudentToUpdate(null)}>
+        <Button onClick={() => setStudentToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
       </div>

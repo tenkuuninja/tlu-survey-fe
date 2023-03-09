@@ -25,8 +25,8 @@ const theme = createMuiTheme({
 
 export default function OverrideMuiTheme({ children }) {
   return (
-    // <StyledEngineProvider injectFirst>
+    <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
-    // </StyledEngineProvider>
+    </StyledEngineProvider>
   )
 }
