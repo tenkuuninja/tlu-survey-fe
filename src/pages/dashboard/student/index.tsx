@@ -1,8 +1,16 @@
-import { IconButton, Button } from '@mui/material'
+import { 
+IconButton, 
+Button, 
+Dialog, 
+DialogTitle, 
+DialogContent,
+DialogContentText,
+DialogActions } from '@mui/material'
 import { useState, useEffect } from 'react'
 import DataTable from 'react-data-table-component'
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
 import EditDialog from './EditDialog'
+
 
 const fakes = [...new Array(10)].map((item, i) => ({
   id: i + 1,
@@ -19,6 +27,8 @@ const fakes = [...new Array(10)].map((item, i) => ({
 const StudentDashboardPage = () => {
   const [students, setStudents] = useState<any[]>([])
   const [studentToUpdate, setStudentToUpdate] = useState<any>(null)
+  const [studentDeleteID, setStudentDeleteID] = useState<any>(null)
+  const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
 
   const handleFetchStudent = () => {
     setStudents(fakes)
@@ -28,6 +38,22 @@ const StudentDashboardPage = () => {
     handleFetchStudent()
   }, [])
 
+  const handleClose = () =>{
+    setOpenConfirmDeleteModal(false);
+  }
+
+  const handleClickDelete = (id) =>{
+    setStudentDeleteID(id);
+    setOpenConfirmDeleteModal(true);
+  };
+
+  const handleDeleteStudent = () => {
+    setStudents((pre) => {
+      const newArray = [...pre];
+      return newArray.filter((students)=> students.id!==studentDeleteID );
+    });
+    setOpenConfirmDeleteModal(false);
+  }
   const columns = [
     {
       name: '#',
@@ -72,6 +98,13 @@ const StudentDashboardPage = () => {
           >
             <AiOutlineEdit />
           </IconButton>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => handleClickDelete(row.id)}
+          >
+            <AiOutlineDelete />
+          </IconButton>
         </>
       ),
     },
@@ -94,6 +127,25 @@ const StudentDashboardPage = () => {
         data={studentToUpdate}
         onSuccess={handleFetchStudent}
       />
+      <Dialog open={isOpenConfirmDeleteModal} onClose={handleClose} maxWidth="xs" fullWidth>
+      <DialogTitle>Xác nhận xóa sinh viên</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">
+          Bạn có chắc muốn xóa sinh viên này không??
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Hủy</Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleDeleteStudent}
+          startIcon={<AiOutlineDelete />}
+        >
+          Xóa
+        </Button>
+      </DialogActions>
+    </Dialog>
     </div>
   )
 }
