@@ -120,7 +120,7 @@ const ClassDashboardPage = () => {
         <Button>
         <AiOutlineSearch/>
         </Button>   
-        <Button onClick={() => setClassToUpdate(null)}>
+        <Button onClick={() => setClassToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
       </div>

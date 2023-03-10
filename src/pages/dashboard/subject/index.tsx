@@ -71,7 +71,7 @@ const SubjectDashboardPage = () => {
         <Button>
         <AiOutlineSearch/>
         </Button> 
-        <Button onClick={() => setSubjectToUpdate(null)}>
+        <Button onClick={() => setSubjectToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
       </div>

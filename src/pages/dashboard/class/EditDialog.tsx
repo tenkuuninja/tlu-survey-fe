@@ -8,25 +8,23 @@ import {
     FormLabel,
     TextField,
     Grid,
-    MenuItem,
-    Select,
   } from '@mui/material'
   import { useFormik } from 'formik'
-  import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+  import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai'
   import * as yup from 'yup'
   
   const validationSchema = yup.object({})
   
   const initialValues = {
     name: '',
-    email: '',
-    address: '',
-    phoneNumber: '',
-    sex: '',
-    status: '',
+    startday: '',
+    endday: '',
+    lecture: '',
+    subject: '',
+    department: '',
   }
   const EditDialog = ({ open, onClose, data, onSuccess }) => {
-    const isUpdate = !!data
+    const isUpdate = !!data?.id
   
     const formik = useFormik({
       initialValues,
@@ -47,7 +45,7 @@ import {
             <Grid container spacing={[2, 2]}>
               <Grid item md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Họ tên</FormLabel>
+                  <FormLabel>Tên lớp</FormLabel>
                   <TextField
                     size="small"
                     name="name"
@@ -55,84 +53,82 @@ import {
                     onChange={formik.handleChange}
                     error={!!formik.errors.name}
                     helperText={formik.errors.name}
-                    placeholder="Nhập họ tên của bạn"
+                    placeholder="Nhập tên lớp"
                     fullWidth
                   />
                 </FormControl>
               </Grid>
               <Grid item md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Ngày bắt đầu</FormLabel>
                   <TextField
                     size="small"
                     name="email"
-                    value={formik.values.email}
+                    value={formik.values.startday}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.email}
-                    helperText={formik.errors.email}
-                    placeholder="Nhập email của bạn"
+                    error={!!formik.errors.startday}
+                    helperText={formik.errors.startday}
+                    placeholder="Nhập ngày bắt đầu"
                     fullWidth
                   />
                 </FormControl>
               </Grid>
               <Grid item md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Địa chỉ</FormLabel>
+                  <FormLabel>Ngày bắt đầu</FormLabel>
                   <TextField
                     size="small"
                     name="address"
-                    value={formik.values.address}
+                    value={formik.values.endday}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.address}
-                    helperText={formik.errors.address}
-                    placeholder="Nhập địa chỉ của bạn"
+                    error={!!formik.errors.endday}
+                    helperText={formik.errors.endday}
+                    placeholder="Nhập ngày kết thúc"
                     fullWidth
                   />
                 </FormControl>
               </Grid>
               <Grid item md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Số điện thoại</FormLabel>
+                  <FormLabel>Giảng viên</FormLabel>
                   <TextField
                     size="small"
                     name="phoneNumber"
-                    value={formik.values.phoneNumber}
+                    value={formik.values.lecture}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.phoneNumber}
-                    helperText={formik.errors.phoneNumber}
-                    placeholder="Nhập số điện thoại của bạn"
+                    error={!!formik.errors.lecture}
+                    helperText={formik.errors.lecture}
+                    placeholder="Nhập ngày kết thúc"
                     fullWidth
                   />
                 </FormControl>
               </Grid>
               <Grid item md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Giới tính</FormLabel>
-                  <Select
+                  <FormLabel>Tên môn</FormLabel>
+                  <TextField
                     size="small"
                     name="sex"
-                    value={formik.values.sex}
+                    value={formik.values.subject}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.sex}
-                    placeholder="Nhập giới tính của bạn"
+                    error={!!formik.errors.subject}
+                    placeholder="Nhập tên môn học"
                     fullWidth
                   >
-                  <MenuItem value={'male'}>Nam</MenuItem>
-                  <MenuItem value={'female'}>Nữ</MenuItem>
-                </Select>
+                </TextField>
                 </FormControl>
               </Grid>
               <Grid item md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Trạng thái</FormLabel>
+                  <FormLabel>Tên khoa</FormLabel>
                   <TextField
                     size="small"
                     name="status"
-                    value={formik.values.status}
+                    value={formik.values.department}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.status}
-                    helperText={formik.errors.status}
-                    placeholder="Nhập trạng thái của bạn"
+                    error={!!formik.errors.department}
+                    helperText={formik.errors.department}
+                    placeholder="Nhập khoa"
                     fullWidth
                   />
                 </FormControl>
@@ -142,7 +138,7 @@ import {
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Hủy</Button>
-          <Button type="submit" variant="contained" startIcon={<AiOutlineEdit />}>
+          <Button type="submit" variant="contained" startIcon={isUpdate ? <AiOutlineEdit /> : <AiOutlinePlus/>}>
             {isUpdate ? 'Sửa' : 'Thêm'}
           </Button>
         </DialogActions>

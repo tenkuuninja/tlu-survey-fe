@@ -10,7 +10,7 @@ import {
     Grid,
   } from '@mui/material'
   import { useFormik } from 'formik'
-  import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+  import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai'
   import * as yup from 'yup'
   
   const validationSchema = yup.object({})
@@ -24,7 +24,7 @@ import {
   
 
   const EditDialog = ({ open, onClose, data, onSuccess }) => {
-    const isUpdate = !!data
+    const isUpdate = !!data?.id
   
     const formik = useFormik({
       initialValues,
@@ -108,7 +108,7 @@ import {
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Hủy</Button>
-          <Button type="submit" variant="contained" startIcon={<AiOutlineEdit />}>
+          <Button type="submit" variant="contained" startIcon={isUpdate ? <AiOutlineEdit /> : <AiOutlinePlus/>}>
             {isUpdate ? 'Sửa' : 'Thêm'}
           </Button>
         </DialogActions>

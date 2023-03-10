@@ -86,7 +86,7 @@ const LecturerDashboardPage = () => {
         <Button>
         <AiOutlineSearch/>
         </Button> 
-        <Button onClick={() => setLectureToUpdate(null)}>
+        <Button onClick={() => setLectureToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
       </div>
