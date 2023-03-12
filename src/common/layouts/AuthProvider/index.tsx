@@ -6,14 +6,14 @@ export default function AuthProvider({ children }: any) {
   const { isAuthenticated, isAuthenticating } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (!isAuthenticating && !isAuthenticated) {
-      navigate('/login')
-    }
-    if (!isAuthenticating && isAuthenticated) {
-      navigate('/dashboard')
-    }
-  }, [isAuthenticated])
+  // useEffect(() => {
+  //   if (!isAuthenticating && !isAuthenticated) {
+  //     navigate('/login')
+  //   }
+  //   if (!isAuthenticating && isAuthenticated) {
+  //     navigate('/dashboard')
+  //   }
+  // }, [isAuthenticated])
 
   return <>{children}</>
 }

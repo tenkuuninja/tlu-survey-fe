@@ -1,33 +1,56 @@
 import {
-  Dialog,
-  Button,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControl,
-  FormLabel,
-  TextField,
-  Grid,
-  Select,
-  MenuItem,
-  Paper,
-  InputAdornment,
-  IconButton,
   Autocomplete,
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Paper,
+  TextField,
 } from '@mui/material'
+import SurveyApi from 'common/apis/survey'
 import { useFormik } from 'formik'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
 import { BsCircle } from 'react-icons/bs'
+import { toast } from 'react-toastify'
 import * as yup from 'yup'
 
 const validationSchema = yup.object({})
 
+const questionTypes = [
+  {
+    id: 1,
+    code: '',
+    name: 'Trắc nghiệm',
+  },
+  {
+    id: 2,
+    code: '',
+    name: 'Hộp chọn',
+  },
+  {
+    id: 3,
+    code: '',
+    name: 'Thả xuống',
+  },
+  {
+    id: 4,
+    code: '',
+    name: 'Văn bản',
+  },
+]
+
 interface IQuestion {
   no: number
   title: string
-  type: number
+  type_id: number
   options: {
     title: string
     no: number
@@ -37,47 +60,61 @@ interface IQuestion {
 
 const defaultQuestion: IQuestion = {
   no: 1,
-  title: 'Tiêu đề',
-  type: 1,
+  title: 'Câu hỏi 1',
+  type_id: 1,
   required: false,
   options: [
     {
-      title: '',
+      title: 'Tuỳ chọn 1',
       no: 1,
     },
   ],
 }
 
 const initialValues = {
-  title: '',
+  title: 'Biểu mẫu chưa có tiều đề',
   questions: [defaultQuestion] as IQuestion[],
 }
 
 const EditDialog = ({ open, onClose, data, onSuccess }) => {
+  const [isLoading, setLoading] = useState(false)
   const isUpdate = !!data?.id
 
   const formik = useFormik({
-    initialValues: data?.id ? data : initialValues,
+    initialValues: initialValues,
     validationSchema,
     validateOnChange: false,
     validateOnBlur: false,
-    onSubmit(values) {
-      console.log('create user with', values)
-      onSuccess && onSuccess()
+    async onSubmit(values) {
+      setLoading(true)
+      try {
+        if (isUpdate) {
+          await SurveyApi.updateById(data.id, values)
+        } else {
+          await SurveyApi.create(values)
+        }
+        onSuccess && onSuccess()
+        onClose()
+        toast.success((isUpdate ? 'Sửa' : 'Tạo') + ' khảo sát thành công')
+      } catch (error) {
+        toast.error('Đã có lỗi xảy ra')
+      }
+      setLoading(false)
     },
   })
 
   useEffect(() => {
     formik.resetForm()
+    formik.setValues(data?.id ? data : initialValues)
   }, [data?.id])
 
   console.log(formik.values)
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{isUpdate ? 'Sửa' : 'Thêm'} biểu mẫu khảo sát</DialogTitle>
-      <DialogContent>
-        <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
+        <DialogTitle>{isUpdate ? 'Sửa' : 'Thêm'} biểu mẫu khảo sát</DialogTitle>
+        <DialogContent>
           <div>
             <FormControl fullWidth sx={{ mb: 2 }}>
               <FormLabel>Tiêu đề</FormLabel>
@@ -86,6 +123,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 name="title"
                 value={formik.values.title}
                 onChange={formik.handleChange}
+                onFocus={(e) => e.target.select()}
                 error={!!formik.errors?.title}
                 helperText={(formik.errors as any)?.title}
                 placeholder="Nhập tiêu đề"
@@ -103,6 +141,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                       name={`questions[${i}].title`}
                       value={formik.values.questions[i].title}
                       onChange={formik.handleChange}
+                      onFocus={(e) => e.target.select()}
                       error={!!(formik.errors as any)?.questions?.[i]?.title}
                       helperText={(formik.errors as any)?.questions?.[i]?.title}
                       label="Tiêu đề"
@@ -115,18 +154,20 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 <Grid item md={6}>
                   <FormControl fullWidth>
                     <Autocomplete
-                      options={['Single choice', 'Multiple choice']}
+                      options={questionTypes}
+                      getOptionLabel={(option) => option?.name}
+                      isOptionEqualToValue={(option, value) =>
+                        option?.id === value?.id
+                      }
                       value={
-                        ['Single choice', 'Multiple choice'][
-                          formik.values.questions[i]?.type
+                        questionTypes?.[
+                          formik.values.questions[i]?.type_id - 1 || 0
                         ]
                       }
                       onChange={(e, value) =>
                         formik.setFieldValue(
-                          `questions[${i}].type`,
-                          ['Single choice', 'Multiple choice'].indexOf(
-                            value || '',
-                          ),
+                          `questions[${i}].type_id`,
+                          value?.id,
                         )
                       }
                       renderInput={(props) => (
@@ -147,6 +188,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                         name={`questions[${i}].options[${j}].title`}
                         value={formik.values.questions[i]?.options?.[j]?.title}
                         onChange={formik.handleChange}
+                        onFocus={(e) => e.target.select()}
                         error={
                           !!(formik.errors as any)?.questions?.[i]?.options?.[j]
                             ?.title
@@ -159,22 +201,23 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                         variant="standard"
                         fullWidth
                         InputProps={{
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() =>
-                                  formik.setFieldValue(
-                                    `questions[${i}].options`,
-                                    formik.values.questions[i].options.filter(
-                                      (item, k) => k != j,
-                                    ),
-                                  )
-                                }
-                              >
-                                <AiOutlineDelete />
-                              </IconButton>
-                            </InputAdornment>
-                          ),
+                          endAdornment:
+                            question.options?.length > 1 ? (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() =>
+                                    formik.setFieldValue(
+                                      `questions[${i}].options`,
+                                      formik.values.questions[i].options.filter(
+                                        (item, k) => k != j,
+                                      ),
+                                    )
+                                  }
+                                >
+                                  <AiOutlineDelete />
+                                </IconButton>
+                              </InputAdornment>
+                            ) : null,
                         }}
                       />
                     </FormControl>
@@ -187,7 +230,9 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                       formik.setFieldValue(`questions[${i}].options`, [
                         ...formik.values.questions[i].options,
                         {
-                          title: '',
+                          title:
+                            'Tuỳ chọn ' +
+                            (formik.values.questions[i].options?.length + 1),
                           no: formik.values.questions[i].options?.length + 1,
                         },
                       ])
@@ -198,16 +243,18 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 </Grid>
                 <Grid item xs={12}>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <IconButton
-                      onClick={() =>
-                        formik.setFieldValue(
-                          `questions`,
-                          formik.values.questions.filter((item, k) => k != i),
-                        )
-                      }
-                    >
-                      <AiOutlineDelete />
-                    </IconButton>
+                    {formik.values.questions?.length > 1 ? (
+                      <IconButton
+                        onClick={() =>
+                          formik.setFieldValue(
+                            `questions`,
+                            formik.values.questions.filter((item, k) => k != i),
+                          )
+                        }
+                      >
+                        <AiOutlineDelete />
+                      </IconButton>
+                    ) : null}
                   </Box>
                 </Grid>
               </Grid>
@@ -219,20 +266,28 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
             onClick={() =>
               formik.setFieldValue('questions', [
                 ...formik.values.questions,
-                { ...defaultQuestion },
+                {
+                  ...defaultQuestion,
+                  title: 'Câu hỏi ' + (formik.values.questions?.length + 1),
+                },
               ])
             }
           >
             Thêm câu hỏi <AiOutlinePlus />
           </Button>
-        </form>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Hủy</Button>
-        <Button type="submit" variant="contained" startIcon={<AiOutlineEdit />}>
-          {isUpdate ? 'Sửa' : 'Thêm'}
-        </Button>
-      </DialogActions>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Hủy</Button>
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={isLoading}
+            startIcon={<AiOutlineEdit />}
+          >
+            {isUpdate ? 'Sửa' : 'Thêm'}
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   )
 }

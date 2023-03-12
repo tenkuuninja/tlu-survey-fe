@@ -7,12 +7,12 @@ const HomePage = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!isAuthenticating && !isAuthenticated) {
-      navigate('/login')
-    }
-    if (!isAuthenticating && isAuthenticated) {
-      navigate('/dashboard')
-    }
+    // if (!isAuthenticating && !isAuthenticated) {
+    //   navigate('/login')
+    // }
+    // if (!isAuthenticating && isAuthenticated) {
+    //   navigate('/dashboard')
+    // }
   }, [isAuthenticated])
 
   return <></>

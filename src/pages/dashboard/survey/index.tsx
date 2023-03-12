@@ -1,22 +1,28 @@
-import { IconButton, Button } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { Button, IconButton, Skeleton } from '@mui/material'
+import SurveyApi from 'common/apis/survey'
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
+import {
+  AiOutlineDelete,
+  AiOutlineEdit,
+  AiOutlineEye,
+  AiOutlinePlus,
+} from 'react-icons/ai'
+import { Link } from 'react-router-dom'
+import DeleteDialog from './DeleteDialog'
 import EditDialog from './EditDialog'
 
-const fakes = [...new Array(10)].map((item, i) => ({
-  id: i + 1,
-  title: 'Khảo sát về dịch bệnh covid',
-  numberOfQuestions: 4,
-}))
-
 const SurveyDashboardPage = () => {
+  const [isLoading, setLoading] = useState(false)
   const [surveys, setSurveys] = useState<any[]>([])
   const [itemToUpdate, setItemToUpdate] = useState<any>(null)
   const [itemToDelete, setItemToDelete] = useState<any>(null)
 
-  const handleFetchItem = () => {
-    setSurveys(fakes)
+  const handleFetchItem = async () => {
+    setLoading(true)
+    const res = await SurveyApi.getAll()
+    setSurveys(res.data)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -29,17 +35,26 @@ const SurveyDashboardPage = () => {
       selector: (row) => row.id,
     },
     {
+      name: 'Mã',
+      selector: (row) => row.code,
+    },
+    {
       name: 'Tiêu đề',
       selector: (row) => row.title,
     },
     {
       name: 'Số câu hỏi',
-      selector: (row) => row.numberOfQuestions,
+      selector: (row) => row.questions?.length || 0,
     },
     {
       name: 'Hành động',
       selector: (row) => (
         <>
+          <Link to={`/survey/${row?.id}`}>
+            <IconButton size="small" color="info">
+              <AiOutlineEye />
+            </IconButton>
+          </Link>
           <IconButton
             size="small"
             color="info"
@@ -68,12 +83,30 @@ const SurveyDashboardPage = () => {
         </Button>
       </div>
       <div>
-        <DataTable data={surveys} columns={columns} />
+        {isLoading && (
+          <>
+            {[...new Array(10)].map((item, i) => (
+              <Skeleton
+                variant="rectangular"
+                height={32}
+                sx={{ mt: 2 }}
+                key={i}
+              />
+            ))}
+          </>
+        )}
+        {!isLoading && <DataTable data={surveys} columns={columns} />}
       </div>
       <EditDialog
         open={!!itemToUpdate}
         onClose={() => setItemToUpdate(null)}
         data={itemToUpdate}
+        onSuccess={handleFetchItem}
+      />
+      <DeleteDialog
+        open={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        data={itemToDelete}
         onSuccess={handleFetchItem}
       />
     </div>
