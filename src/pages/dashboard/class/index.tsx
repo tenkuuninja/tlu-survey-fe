@@ -5,7 +5,10 @@ import {
   DialogTitle, 
   DialogContent,
   DialogContentText,
-  DialogActions } from '@mui/material'
+  DialogActions,
+  FormControl,
+  FormLabel,
+  TextField, } from '@mui/material'
 import { useState, useEffect } from 'react'
 import DataTable from 'react-data-table-component'
 import { AiOutlineDelete, AiOutlineEdit, AiOutlineEye, AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
@@ -29,6 +32,7 @@ const ClassDashboardPage = () => {
   const [listStudent, setListStudent] = useState<any>(null)
   const [classDeleteID, setClassDeleteID] = useState<any>(null)
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
+  const [search,setSearch] = useState()
   const handleFetchClass = () => {
     setClasses(fakesgv)
   }
@@ -117,9 +121,17 @@ const ClassDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Lớp học</h2>
-        <Button>
-        <AiOutlineSearch/>
-        </Button>   
+        <div> 
+        <FormControl fullWidth>
+                  <FormLabel>Tên lớp</FormLabel>
+                  <TextField
+                    size="small"           
+                    placeholder="Tìm kiếm..."
+                    fullWidth
+                  />
+                </FormControl>
+
+        </div>   
         <Button onClick={() => setClassToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
