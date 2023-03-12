@@ -80,7 +80,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
         onClose()
         toast.success((isUpdate ? 'Sửa' : 'Tạo') + ' sinh viên thành công')
       } catch (error) {
-        toast.error('Đã có lỗi xảy ra')
+        // toast.error('Đã có lỗi xảy ra')
       }
       setLoading(false)
     },
