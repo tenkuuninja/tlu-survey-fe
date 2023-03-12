@@ -6,10 +6,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  FormControl,
-  FormLabel,
+  Skeleton,
   TextField,
 } from '@mui/material'
+import { Link } from 'react-router-dom'
+import SurveyApi from 'common/apis/class'
 import { useState, useEffect } from 'react'
 import DataTable from 'react-data-table-component'
 import {
@@ -17,31 +18,25 @@ import {
   AiOutlineEdit,
   AiOutlineEye,
   AiOutlinePlus,
-  AiOutlineSearch,
 } from 'react-icons/ai'
 import EditDialog from './EditDialog'
 import ListStudentDialog from './ListStudentDialog'
 
-const fakesgv = [...new Array(10)].map((item, i) => ({
-  id: i + 1,
-  classname: 'long1',
-  startday: '1/1/2023',
-  endday: '1/3/2023',
-  lecturename: 'teacher',
-  department: 'CNTT',
-  subject: 'AI',
-}))
-
 const ClassDashboardPage = () => {
+  const [isLoading, setLoading] = useState(false)
   const [classes, setClasses] = useState<any[]>([])
   const [classToUpdate, setClassToUpdate] = useState<any>(null)
   const [listStudent, setListStudent] = useState<any>(null)
   const [classDeleteID, setClassDeleteID] = useState<any>(null)
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
   const [search, setSearch] = useState()
-  const handleFetchClass = () => {
-    setClasses(fakesgv)
+  const handleFetchClass = async() => {
+    setLoading(true)
+    const res = await SurveyApi.getAll()
+    setClasses(res.data)
+    setLoading(false)
   }
+  
 
   useEffect(() => {
     handleFetchClass()
@@ -66,44 +61,34 @@ const ClassDashboardPage = () => {
 
   const columns = [
     {
-      name: '#',
-      selector: (row) => row.id,
+      name: 'Mã lớp',
+      selector: (row) => row.code,
     },
     {
       name: 'Tên lớp',
-      selector: (row) => row.classname,
-    },
-    {
-      name: 'Ngày bắt đầu',
-      selector: (row) => row.startday,
-    },
-    {
-      name: 'Ngày kết thúc',
-      selector: (row) => row.endday,
-    },
-    {
-      name: 'Giảng viên',
-      selector: (row) => row.lecturename,
+      selector: (row) => row.name,
     },
     {
       name: 'Tên môn',
-      selector: (row) => row.subject,
+      selector: (row) => row.subject_id,
     },
     {
-      name: 'Tên khoa',
-      selector: (row) => row.department,
+      name: 'Giảng viên',
+      selector: (row) => row.teacher_id,
+    },
+    {
+      name: 'Trạng thái',
+      selector: (row) => row.status,
     },
     {
       name: 'Hành động',
       selector: (row) => (
         <>
-          <IconButton
-            size="small"
-            color="success"
-            onClick={() => setListStudent(row)}
-          >
-            <AiOutlineEye />
-          </IconButton>
+          <Link to={`/survey/${row?.id}`} target="_blank">
+            <IconButton size="small" color="info">
+              <AiOutlineEye />
+            </IconButton>
+          </Link>
           <IconButton
             size="small"
             color="info"
@@ -135,7 +120,19 @@ const ClassDashboardPage = () => {
         </Button>
       </div>
       <div>
-        <DataTable data={classes} columns={columns} />
+      {isLoading && (
+          <>
+            {[...new Array(10)].map((item, i) => (
+              <Skeleton
+                variant="rectangular"
+                height={32}
+                sx={{ mt: 2 }}
+                key={i}
+              />
+            ))}
+          </>
+        )}
+        {!isLoading && <DataTable data={classes} columns={columns} />}
       </div>
       <ListStudentDialog
         open={!!listStudent}

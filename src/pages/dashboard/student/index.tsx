@@ -5,35 +5,27 @@ Dialog,
 DialogTitle, 
 DialogContent,
 DialogContentText,
-DialogActions } from '@mui/material'
+DialogActions,
+Skeleton } from '@mui/material'
+import SurveyApi from 'common/apis/student'
 import { useState, useEffect } from 'react'
 import DataTable from 'react-data-table-component'
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
 import EditDialog from './EditDialog'
 
-
-const fakes = [...new Array(10)].map((item, i) => ({
-  id: i + 1,
-  role: 'admin',
-  username: 'hoangdz',
-  email: 'chuatebongtoi@gmail.com',
-  name: 'Nguyễn Việt Hoàng',
-  address: 'Đông Anh',
-  phoneNumber: '0969696969696',
-  sex: 'male',
-  status: 1,
-}))
-
 const StudentDashboardPage = () => {
+  const [isLoading, setLoading] = useState(false)
   const [students, setStudents] = useState<any[]>([])
   const [studentToUpdate, setStudentToUpdate] = useState<any>(null)
   const [studentDeleteID, setStudentDeleteID] = useState<any>(null)
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
 
-  const handleFetchStudent = () => {
-    setStudents(fakes)
+  const handleFetchStudent = async() => {
+    setLoading(true)
+    const res = await SurveyApi.getAll()
+    setStudents(res.data)
+    setLoading(false)
   }
-
   useEffect(() => {
     handleFetchStudent()
   }, [])
@@ -56,12 +48,24 @@ const StudentDashboardPage = () => {
   }
   const columns = [
     {
-      name: '#',
+      name: 'Mã sinh viên',
       selector: (row) => row.id,
+    },
+    {
+      name: 'Họ tên',
+      selector: (row) => row.name,
+    },
+    {
+      name: 'Thuộc khoa',
+      selector: (row) => row.department_id,
     },
     {
       name: 'Tên đăng nhập',
       selector: (row) => row.username,
+    },
+    {
+      name: 'Mật khẩu',
+      selector: (row) => row.password_hashed,
     },
     {
       name: 'Email',
@@ -73,7 +77,7 @@ const StudentDashboardPage = () => {
     },
     {
       name: 'Số điện thoại',
-      selector: (row) => row.phoneNumber,
+      selector: (row) => row.phone_number,
     },
     {
       name: 'Giới tính',
@@ -81,11 +85,7 @@ const StudentDashboardPage = () => {
     },
     {
       name: 'Vai trò',
-      selector: (row) => row.role,
-    },
-    {
-      name: 'Trạng thái',
-      selector: (row) => (row.status === 1 ? 'Đã nghỉ học' : 'Chưa nghỉ học'),
+      selector: (row) => row.status,
     },
     {
       name: 'Hành động',
@@ -119,7 +119,19 @@ const StudentDashboardPage = () => {
         </Button>
       </div>
       <div>
-        <DataTable data={students} columns={columns} />
+      {isLoading && (
+          <>
+            {[...new Array(10)].map((item, i) => (
+              <Skeleton
+                variant="rectangular"
+                height={32}
+                sx={{ mt: 2 }}
+                key={i}
+              />
+            ))}
+          </>
+        )}
+        {!isLoading && <DataTable data={students} columns={columns} />}
       </div>
       <EditDialog
         open={!!studentToUpdate}

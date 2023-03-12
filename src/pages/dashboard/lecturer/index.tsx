@@ -1,29 +1,26 @@
-import { IconButton, Button } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { Button, IconButton, Skeleton } from '@mui/material'
+import SurveyApi from 'common/apis/teacher'
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
+import {
+  AiOutlineEdit,
+  AiOutlineSearch,
+  AiOutlinePlus,
+} from 'react-icons/ai'
+import { Link } from 'react-router-dom'
 import EditDialog from './EditDialog'
 
-const fakesgv = [...new Array(10)].map((item, i) => ({
-  id: i + 1,
-  role: 'lecture',
-  username: 'long1',
-  email: 'ngbt1@gmail.com',
-  name: 'Le Hoang Long',
-  address: 'VietNam',
-  phoneNumber: '0969696969696',
-  sex: 'male',
-  status: (i%2===0 ? 1 : 0),
-}))
-
 const LecturerDashboardPage = () => {
-
+  const [isLoading, setLoading] = useState(false)
   const [lectures, setLectures] = useState<any[]>([])
   const [lectureToUpdate, setLectureToUpdate] = useState<any>(null)
   const [lectureToDelete, setLectureToDelete] = useState<any>(null)
 
-  const handleFetchLecture = () => {
-    setLectures(fakesgv)
+  const handleFetchLecture = async() => {
+    setLoading(true)
+    const res = await SurveyApi.getAll()
+    setLectures(res.data)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -32,16 +29,24 @@ const LecturerDashboardPage = () => {
 
   const columns = [
     {
-      name: '#',
-      selector: (row) => row.id,
+      name: 'Mã',
+      selector: (row) => row.code,
+    },
+    {
+      name:'Họ tên',
+      selector: (row) =>row.name,
+    },
+    {
+      name: 'Khoa',
+      selector: (row) =>row.department_id,
     },
     {
       name: 'Tên đăng nhập',
       selector: (row) => row.username,
     },
     {
-      name:'Họ tên',
-      selector: (row) =>row.name,
+      name: 'Mật khẩu',
+      selector: (row) =>row.password_hashed,
     },
     {
       name: 'Email',
@@ -53,7 +58,7 @@ const LecturerDashboardPage = () => {
     },
     {
       name: 'Số điện thoại',
-      selector: (row) => row.phoneNumber,
+      selector: (row) => row.phone_number,
     },
     {
       name: 'Giới tính',
@@ -61,7 +66,7 @@ const LecturerDashboardPage = () => {
     },
     {
       name: 'Trạng thái',
-      selector: (row) => (row.status === 1 ? 'Còn công tác' : 'Đã ngừng công tác'),
+      selector: (row) => row.status,
     },
     {
       name: 'Hành động',
@@ -73,8 +78,7 @@ const LecturerDashboardPage = () => {
             onClick={() => setLectureToUpdate(row)}
           >
           <AiOutlineEdit/>
-          </IconButton>
-        
+          </IconButton>      
       ),
     },
   ]
@@ -91,7 +95,19 @@ const LecturerDashboardPage = () => {
         </Button>
       </div>
       <div>
-        <DataTable data={lectures} columns={columns} />
+      {isLoading && (
+          <>
+            {[...new Array(10)].map((item, i) => (
+              <Skeleton
+                variant="rectangular"
+                height={32}
+                sx={{ mt: 2 }}
+                key={i}
+              />
+            ))}
+          </>
+        )}
+        {!isLoading && <DataTable data={lectures} columns={columns} />}
       </div>
       <EditDialog
         open={!!lectureToUpdate}

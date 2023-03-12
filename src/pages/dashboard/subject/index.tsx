@@ -1,23 +1,28 @@
-import { IconButton, Button } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { Button, IconButton, Skeleton } from '@mui/material'
+import SurveyApi from 'common/apis/subject'
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus, AiOutlineSearch } from 'react-icons/ai'
+import {
+  AiOutlineDelete,
+  AiOutlineEdit,
+  AiOutlineEye,
+  AiOutlinePlus,
+  AiOutlineSearch,
+} from 'react-icons/ai'
+import { Link } from 'react-router-dom'
 import EditDialog from './EditDialog'
-
-const fakessj = [...new Array(10)].map((item, i) => ({
-  id: i + 1,
-  name: 'monhoc'+i,
-  credit :3,
-  department: 'CNTT',
-  
-}))
+ 
 const SubjectDashboardPage = () => {
+  const [isLoading, setLoading] = useState(false)
   const [subjects, setSubjects] = useState<any[]>([])
   const [subjectToUpdate, setSubjectToUpdate] = useState<any>(null)
   const [subjectToDelete, setSubjectToDelete] = useState<any>(null)
 
-  const handleFetchSubject = () => {
-    setSubjects(fakessj)
+  const handleFetchSubject = async() => {
+    setLoading(true)
+    const res = await SurveyApi.getAll()
+    setSubjects(res.data)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -27,19 +32,23 @@ const SubjectDashboardPage = () => {
   const columns = [
     {
       name: 'Mã môn',
-      selector: (row) => row.id,
+      selector: (row) => row.code,
     },
     {
       name: 'Tên môn',
       selector: (row) => row.name,
     },
     {
-      name: 'Số tín chỉ',
-      selector: (row) => row.credit,
+      name: 'Thuộc Khoa',
+      selector: (row) => row.department_id,
     },
     {
-      name: 'Khoa',
-      selector: (row) => row.department,
+      name: 'Số tín chỉ',
+      selector: (row) => row.credit_number,
+    },
+    {
+      name: 'Mô tả',
+      selector: (row) => row.description,
     },
     {
       name: 'Hành động',
@@ -76,7 +85,19 @@ const SubjectDashboardPage = () => {
         </Button>
       </div>
       <div>
-        <DataTable data={subjects} columns={columns} />
+      {isLoading && (
+          <>
+            {[...new Array(10)].map((item, i) => (
+              <Skeleton
+                variant="rectangular"
+                height={32}
+                sx={{ mt: 2 }}
+                key={i}
+              />
+            ))}
+          </>
+        )}
+        {!isLoading && <DataTable data={subjects} columns={columns} />}
       </div>
       <EditDialog
         open={!!subjectToUpdate}
