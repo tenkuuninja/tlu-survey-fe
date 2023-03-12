@@ -1,28 +1,38 @@
-import { 
-IconButton, 
-Button, 
-Dialog, 
-DialogTitle, 
-DialogContent,
-DialogContentText,
-DialogActions,
-Skeleton } from '@mui/material'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Tooltip,
+  Skeleton,
+} from '@mui/material'
 import SurveyApi from 'common/apis/student'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
+import {
+  AiOutlineDelete,
+  AiOutlineEdit,
+  AiOutlinePlus,
+  AiOutlineSearch,
+} from 'react-icons/ai'
 import EditDialog from './EditDialog'
 
 const StudentDashboardPage = () => {
   const [isLoading, setLoading] = useState(false)
+  const [filter, setFilter] = useState<any>({})
   const [students, setStudents] = useState<any[]>([])
   const [studentToUpdate, setStudentToUpdate] = useState<any>(null)
   const [studentDeleteID, setStudentDeleteID] = useState<any>(null)
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
 
-  const handleFetchStudent = async() => {
+  const handleFetchStudent = async () => {
     setLoading(true)
-    const res = await SurveyApi.getAll()
+    const res = await SurveyApi.getAll(filter)
     setStudents(res.data)
     setLoading(false)
   }
@@ -30,21 +40,21 @@ const StudentDashboardPage = () => {
     handleFetchStudent()
   }, [])
 
-  const handleClose = () =>{
-    setOpenConfirmDeleteModal(false);
+  const handleClose = () => {
+    setOpenConfirmDeleteModal(false)
   }
 
-  const handleClickDelete = (id) =>{
-    setStudentDeleteID(id);
-    setOpenConfirmDeleteModal(true);
-  };
+  const handleClickDelete = (id) => {
+    setStudentDeleteID(id)
+    setOpenConfirmDeleteModal(true)
+  }
 
   const handleDeleteStudent = () => {
     setStudents((pre) => {
-      const newArray = [...pre];
-      return newArray.filter((students)=> students.id!==studentDeleteID );
-    });
-    setOpenConfirmDeleteModal(false);
+      const newArray = [...pre]
+      return newArray.filter((students) => students.id !== studentDeleteID)
+    })
+    setOpenConfirmDeleteModal(false)
   }
   const columns = [
     {
@@ -57,15 +67,11 @@ const StudentDashboardPage = () => {
     },
     {
       name: 'Thuộc khoa',
-      selector: (row) => row.department_id,
+      selector: (row) => row.department?.code,
     },
     {
       name: 'Tên đăng nhập',
       selector: (row) => row.username,
-    },
-    {
-      name: 'Mật khẩu',
-      selector: (row) => row.password_hashed,
     },
     {
       name: 'Email',
@@ -81,30 +87,30 @@ const StudentDashboardPage = () => {
     },
     {
       name: 'Giới tính',
-      selector: (row) => row.sex,
-    },
-    {
-      name: 'Vai trò',
-      selector: (row) => row.status,
+      selector: (row) => (row.sex === 1 ? 'Nam' : 'Nữ'),
     },
     {
       name: 'Hành động',
       selector: (row) => (
         <>
-          <IconButton
-            size="small"
-            color="info"
-            onClick={() => setStudentToUpdate(row)}
-          >
-            <AiOutlineEdit />
-          </IconButton>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => handleClickDelete(row.id)}
-          >
-            <AiOutlineDelete />
-          </IconButton>
+          <Tooltip arrow title="Sửa" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setStudentToUpdate(row)}
+            >
+              <AiOutlineEdit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title="Xoá" placement="top">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => handleClickDelete(row.id)}
+            >
+              <AiOutlineDelete />
+            </IconButton>
+          </Tooltip>
         </>
       ),
     },
@@ -118,8 +124,29 @@ const StudentDashboardPage = () => {
           <AiOutlinePlus /> Thêm
         </Button>
       </div>
-      <div>
-      {isLoading && (
+      <div className="mt-4 flex items-center justify-end">
+        <TextField
+          size="small"
+          value={filter?.search || ''}
+          onChange={(e) => setFilter({ search: e.target.value })}
+          fullWidth
+          placeholder="Tìm kiếm"
+          sx={{ maxWidth: 300 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip arrow title="Tìm kiếm" placement="top">
+                  <IconButton onClick={handleFetchStudent}>
+                    <AiOutlineSearch />
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
+      <div className="mt-10">
+        {isLoading && (
           <>
             {[...new Array(10)].map((item, i) => (
               <Skeleton
@@ -139,25 +166,30 @@ const StudentDashboardPage = () => {
         data={studentToUpdate}
         onSuccess={handleFetchStudent}
       />
-      <Dialog open={isOpenConfirmDeleteModal} onClose={handleClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Xác nhận xóa sinh viên</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Bạn có chắc muốn xóa sinh viên này không??
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Hủy</Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleDeleteStudent}
-          startIcon={<AiOutlineDelete />}
-        >
-          Xóa
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <Dialog
+        open={isOpenConfirmDeleteModal}
+        onClose={handleClose}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Xác nhận xóa sinh viên</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc muốn xóa sinh viên này không??
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Hủy</Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteStudent}
+            startIcon={<AiOutlineDelete />}
+          >
+            Xóa
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

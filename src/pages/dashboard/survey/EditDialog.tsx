@@ -121,9 +121,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
   useEffect(() => {
     formik.resetForm()
     formik.setValues(data?.id ? data : initialValues)
-  }, [data?.id])
-
-  console.log(formik.values)
+  }, [data])
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>

@@ -1,8 +1,8 @@
 import axios from 'configs/axios'
 
 const SurveyApi = {
-  getAll: async () => {
-    const res = await axios.get('/api/survey')
+  getAll: async (filter = {}) => {
+    const res = await axios.get('/api/survey', { params: filter })
     return res.data
   },
   create: async (body) => {

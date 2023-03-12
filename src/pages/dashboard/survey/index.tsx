@@ -1,4 +1,11 @@
-import { Button, IconButton, Skeleton } from '@mui/material'
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Skeleton,
+  TextField,
+  Tooltip,
+} from '@mui/material'
 import SurveyApi from 'common/apis/survey'
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
@@ -7,6 +14,7 @@ import {
   AiOutlineEdit,
   AiOutlineEye,
   AiOutlinePlus,
+  AiOutlineSearch,
 } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import DeleteDialog from './DeleteDialog'
@@ -14,13 +22,14 @@ import EditDialog from './EditDialog'
 
 const SurveyDashboardPage = () => {
   const [isLoading, setLoading] = useState(false)
+  const [filter, setFilter] = useState<any>({})
   const [surveys, setSurveys] = useState<any[]>([])
   const [itemToUpdate, setItemToUpdate] = useState<any>(null)
   const [itemToDelete, setItemToDelete] = useState<any>(null)
 
   const handleFetchItem = async () => {
     setLoading(true)
-    const res = await SurveyApi.getAll()
+    const res = await SurveyApi.getAll(filter)
     setSurveys(res.data)
     setLoading(false)
   }
@@ -51,24 +60,31 @@ const SurveyDashboardPage = () => {
       selector: (row) => (
         <>
           <Link to={`/survey/${row?.id}`} target="_blank">
-            <IconButton size="small" color="info">
-              <AiOutlineEye />
-            </IconButton>
+            <Tooltip arrow title="Khảo sát" placement="top">
+              <IconButton size="small" color="info">
+                <AiOutlineEye />
+              </IconButton>
+            </Tooltip>
           </Link>
-          <IconButton
-            size="small"
-            color="info"
-            onClick={() => setItemToUpdate(row)}
-          >
-            <AiOutlineEdit />
-          </IconButton>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => setItemToDelete(row)}
-          >
-            <AiOutlineDelete />
-          </IconButton>
+          <Tooltip arrow title="Sửa" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setItemToUpdate(row)}
+            >
+              <AiOutlineEdit />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip arrow title="Xoá" placement="top">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => setItemToDelete(row)}
+            >
+              <AiOutlineDelete />
+            </IconButton>
+          </Tooltip>
         </>
       ),
     },
@@ -82,7 +98,28 @@ const SurveyDashboardPage = () => {
           <AiOutlinePlus /> Thêm
         </Button>
       </div>
-      <div>
+      <div className="mt-4 flex items-center justify-end">
+        <TextField
+          size="small"
+          value={filter?.search || ''}
+          onChange={(e) => setFilter({ search: e.target.value })}
+          fullWidth
+          placeholder="Tìm kiếm"
+          sx={{ maxWidth: 300 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip arrow title="Tìm kiếm" placement="top">
+                  <IconButton onClick={handleFetchItem}>
+                    <AiOutlineSearch />
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
+      <div className="mt-10">
         {isLoading && (
           <>
             {[...new Array(10)].map((item, i) => (
