@@ -2,12 +2,14 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export interface Auth {
   user: any
+  role: any
   isAuthenticated: boolean
   isAuthenticating: boolean
 }
 
 const initialState: Auth = {
   user: null,
+  role: null,
   isAuthenticated: false,
   isAuthenticating: false,
 }
@@ -19,7 +21,8 @@ export const AuthSlice = createSlice({
     updateAuthUser: (state: Auth, action: any) => {
       return {
         ...state,
-        user: action.payload,
+        user: action.payload?.user,
+        role: action.payload?.role,
         isAuthenticated: true,
         isAuthenticating: false,
       }
@@ -28,6 +31,7 @@ export const AuthSlice = createSlice({
       return {
         ...state,
         user: null,
+        role: null,
         isAuthenticated: false,
         isAuthenticating: false,
       }
