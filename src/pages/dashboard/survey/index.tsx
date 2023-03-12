@@ -50,7 +50,7 @@ const SurveyDashboardPage = () => {
       name: 'Hành động',
       selector: (row) => (
         <>
-          <Link to={`/survey/${row?.id}`}>
+          <Link to={`/survey/${row?.id}`} target="_blank">
             <IconButton size="small" color="info">
               <AiOutlineEye />
             </IconButton>

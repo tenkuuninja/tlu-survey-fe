@@ -39,14 +39,14 @@ export default [
         icon: AiOutlineUser,
       },
       {
-        label: 'Lớp học',
-        path: '/dashboard/class',
-        icon: BsPeople,
-      },
-      {
         label: 'Môn học',
         path: '/dashboard/subject',
         icon: AiOutlineBook,
+      },
+      {
+        label: 'Lớp học',
+        path: '/dashboard/class',
+        icon: BsPeople,
       },
     ],
   },
