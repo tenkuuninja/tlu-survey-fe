@@ -13,6 +13,8 @@ import {
   InputAdornment,
   Paper,
   TextField,
+  FormControlLabel,
+  Switch,
 } from '@mui/material'
 import SurveyApi from 'common/apis/survey'
 import { useFormik } from 'formik'
@@ -22,7 +24,20 @@ import { BsCircle } from 'react-icons/bs'
 import { toast } from 'react-toastify'
 import * as yup from 'yup'
 
-const validationSchema = yup.object({})
+const validationSchema = yup.object({
+  title: yup.string().required('Tên khảo sát không được để trống'),
+  questions: yup.array().of(
+    yup.object({
+      type_id: yup.number().required('Loại câu hỏi không được để trống'),
+      title: yup.string().required('Tiêu đề câu hỏi không được để trống'),
+      options: yup.array().of(
+        yup.object({
+          title: yup.string().required('Tuỳ chọn không được để trống'),
+        }),
+      ),
+    }),
+  ),
+})
 
 const questionTypes = [
   {
@@ -176,73 +191,97 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={12}>
-                  {question.options.map((option, j) => (
-                    <FormControl
-                      sx={{ flexDirection: 'row', alignItems: 'center', mt: 2 }}
-                      fullWidth
-                    >
-                      <BsCircle className="mr-4" />
-                      <TextField
-                        size="small"
-                        name={`questions[${i}].options[${j}].title`}
-                        value={formik.values.questions[i]?.options?.[j]?.title}
-                        onChange={formik.handleChange}
-                        onFocus={(e) => e.target.select()}
-                        error={
-                          !!(formik.errors as any)?.questions?.[i]?.options?.[j]
-                            ?.title
+                {question?.type_id !== 4 && (
+                  <>
+                    <Grid item xs={12}>
+                      {question.options.map((option, j) => (
+                        <FormControl
+                          sx={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            mt: 2,
+                          }}
+                          fullWidth
+                        >
+                          <BsCircle className="mr-4" />
+                          <TextField
+                            size="small"
+                            name={`questions[${i}].options[${j}].title`}
+                            value={
+                              formik.values.questions[i]?.options?.[j]?.title
+                            }
+                            onChange={formik.handleChange}
+                            onFocus={(e) => e.target.select()}
+                            error={
+                              !!(formik.errors as any)?.questions?.[i]
+                                ?.options?.[j]?.title
+                            }
+                            helperText={
+                              (formik.errors as any)?.questions?.[i]?.options?.[
+                                j
+                              ]?.title
+                            }
+                            placeholder={'Tuỳ chọn ' + (j + 1)}
+                            variant="standard"
+                            fullWidth
+                            InputProps={{
+                              endAdornment:
+                                question.options?.length > 1 ? (
+                                  <InputAdornment position="end">
+                                    <IconButton
+                                      onClick={() =>
+                                        formik.setFieldValue(
+                                          `questions[${i}].options`,
+                                          formik.values.questions[
+                                            i
+                                          ].options.filter((item, k) => k != j),
+                                        )
+                                      }
+                                    >
+                                      <AiOutlineDelete />
+                                    </IconButton>
+                                  </InputAdornment>
+                                ) : null,
+                            }}
+                          />
+                        </FormControl>
+                      ))}
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button
+                        variant="outlined"
+                        onClick={() =>
+                          formik.setFieldValue(`questions[${i}].options`, [
+                            ...formik.values.questions[i].options,
+                            {
+                              title:
+                                'Tuỳ chọn ' +
+                                (formik.values.questions[i].options?.length +
+                                  1),
+                              no:
+                                formik.values.questions[i].options?.length + 1,
+                            },
+                          ])
                         }
-                        helperText={
-                          (formik.errors as any)?.questions?.[i]?.options?.[j]
-                            ?.title
-                        }
-                        placeholder={'Tuỳ chọn ' + (j + 1)}
-                        variant="standard"
-                        fullWidth
-                        InputProps={{
-                          endAdornment:
-                            question.options?.length > 1 ? (
-                              <InputAdornment position="end">
-                                <IconButton
-                                  onClick={() =>
-                                    formik.setFieldValue(
-                                      `questions[${i}].options`,
-                                      formik.values.questions[i].options.filter(
-                                        (item, k) => k != j,
-                                      ),
-                                    )
-                                  }
-                                >
-                                  <AiOutlineDelete />
-                                </IconButton>
-                              </InputAdornment>
-                            ) : null,
-                        }}
-                      />
-                    </FormControl>
-                  ))}
-                </Grid>
-                <Grid item xs={12}>
-                  <Button
-                    variant="outlined"
-                    onClick={() =>
-                      formik.setFieldValue(`questions[${i}].options`, [
-                        ...formik.values.questions[i].options,
-                        {
-                          title:
-                            'Tuỳ chọn ' +
-                            (formik.values.questions[i].options?.length + 1),
-                          no: formik.values.questions[i].options?.length + 1,
-                        },
-                      ])
-                    }
-                  >
-                    Thêm Tuỳ chọn <AiOutlinePlus />
-                  </Button>
-                </Grid>
+                      >
+                        Thêm Tuỳ chọn <AiOutlinePlus />
+                      </Button>
+                    </Grid>
+                  </>
+                )}
                 <Grid item xs={12}>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <FormControlLabel
+                      checked={formik.values.questions[i]?.required}
+                      onChange={(e, checked) =>
+                        formik.setFieldValue(
+                          `questions[${i}].required`,
+                          checked,
+                        )
+                      }
+                      control={<Switch defaultChecked />}
+                      label="Bắt buộc"
+                    />
                     {formik.values.questions?.length > 1 ? (
                       <IconButton
                         onClick={() =>

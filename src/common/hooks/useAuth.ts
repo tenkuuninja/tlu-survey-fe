@@ -25,9 +25,15 @@ export default function useAuth() {
   }
 
   const handleRetrieveCurrentUser = async () => {
-    const res = await AccountApi.getCurrentUser()
-    if (res?.role && res?.user) {
-      dispatch(updateAuthUser(res))
+    try {
+      const res = await AccountApi.getCurrentUser()
+      if (res?.role && res?.user) {
+        dispatch(updateAuthUser(res))
+      } else {
+        dispatch(removeAuth())
+      }
+    } catch (error) {
+      dispatch(removeAuth())
     }
   }
 

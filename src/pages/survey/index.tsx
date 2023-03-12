@@ -9,15 +9,21 @@ import RadioGroup from '@mui/material/RadioGroup'
 import Select from '@mui/material/Select'
 import TextField from '@mui/material/TextField'
 import SurveyApi from 'common/apis/survey'
+import useAuth from 'common/hooks/useAuth'
 import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const SurveyPage = () => {
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(true)
+  const [isSubmited, setSubmited] = useState(false)
   const [survey, setSurvey] = useState<any>()
   const params: any = useParams()
+  const { user, role } = useAuth()
+
+  const teacherId = role === 'teacher' ? user.id : null
+  const studentId = role === 'student' ? user.id : null
 
   const id = +params?.slug
 
@@ -26,8 +32,11 @@ const SurveyPage = () => {
     validateOnChange: false,
     validateOnBlur: false,
     async onSubmit(values) {
-      setLoading(true)
+      setSubmited(true)
       try {
+        const requiredQuestionIds = survey?.questions
+          ?.filter((item) => item?.required)
+          ?.map((item) => item?.id)
         const answers: any[] = []
         for (const ansInfo of values) {
           if (!!ansInfo.answer_text) {
@@ -48,38 +57,53 @@ const SurveyPage = () => {
             )
           }
         }
-        console.log('form', values, answers)
+        for (const qid of requiredQuestionIds) {
+          if (
+            !answers?.find(
+              (item) =>
+                (item?.option_id || item?.answer_text) &&
+                item?.question_id === qid,
+            )
+          ) {
+            return toast.warning('Các trường có dấu * không được để trống')
+          }
+        }
+        console.log('form', values, answers, requiredQuestionIds)
         await SurveyApi.submitFormSurvey({
           answers,
-          section: {
-            teacher_id: null,
-            student_id: null,
-            survey_id: null,
-            completed_on: new Date().toISOString(),
+          teacher_section: {
+            teacher_id: teacherId,
+            survey_id: id,
           },
-          type: 'student',
+          student_section: {
+            student_id: studentId,
+            survey_id: id,
+          },
+          type: role,
         })
       } catch (error) {
         toast.error('Đã có lỗi xảy ra')
+        setSubmited(false)
       }
-      setLoading(false)
     },
   })
 
   useEffect(() => {
     const handleGetSurvey = async () => {
+      setLoading(true)
       const res = await SurveyApi.getById(id)
       setSurvey(res?.data)
       formik.setValues(
         res?.data?.questions?.map((item) => ({
-          teacher_id: null,
-          student_id: null,
+          teacher_id: teacherId,
+          student_id: studentId,
           question_id: item?.id || null,
           option_id: null,
           option_ids: [],
           answer_text: null,
         })),
       )
+      setLoading(false)
     }
     if (!Number.isNaN(id)) {
       handleGetSurvey()
@@ -90,14 +114,24 @@ const SurveyPage = () => {
     return <>404</>
   }
 
+  if (isLoading) {
+    return <></>
+  }
+
   return (
     <form className="mx-auto max-w-[576px] py-4" onSubmit={formik.handleSubmit}>
       <Paper sx={{ p: 2 }}>
         <h1 className="text-[28px]">{survey?.title}</h1>
+        <p className="text-sm text-red-500">* Bắt buộc</p>
       </Paper>
       {survey?.questions.map((question, i) => (
         <Paper className="" sx={{ p: 2, mt: 2 }} key={i}>
-          <h3>{question?.title}</h3>
+          <h3>
+            {question?.title}{' '}
+            {question?.required ? (
+              <span className="text-red-500">*</span>
+            ) : null}
+          </h3>
           {question?.type_id === 1 && (
             <div>
               <RadioGroup
@@ -175,7 +209,7 @@ const SurveyPage = () => {
         </Paper>
       ))}
       <Box sx={{ mt: 2 }}>
-        <Button type="submit" variant="contained">
+        <Button disabled={isSubmited} type="submit" variant="contained">
           Gửi
         </Button>
       </Box>
