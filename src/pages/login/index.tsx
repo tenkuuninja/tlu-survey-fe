@@ -96,7 +96,7 @@ const LoginPage = () => {
               size="small"
             >
               <MenuItem value="student">Sinh viên</MenuItem>
-              <MenuItem value="lecturer">Giảng viên</MenuItem>
+              <MenuItem value="teacher">Giảng viên</MenuItem>
               <MenuItem value="admin">Quản trị viên</MenuItem>
             </Select>
             <Button type="submit" className="w-[180px]" variant="contained">

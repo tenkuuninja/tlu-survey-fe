@@ -14,10 +14,11 @@ export default function AuthProvider({ children }: any) {
     if (!isAuthenticating && !isAuthenticated) {
       navigate('/login')
     }
-    if (!isAuthenticating && isAuthenticated) {
-      navigate('/dashboard')
-    }
   }, [isAuthenticated])
+
+  if (isAuthenticating) {
+    return null
+  }
 
   return <>{children}</>
 }

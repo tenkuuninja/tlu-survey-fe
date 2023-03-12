@@ -11,7 +11,7 @@ const initialState: Auth = {
   user: null,
   role: null,
   isAuthenticated: false,
-  isAuthenticating: false,
+  isAuthenticating: true,
 }
 
 export const AuthSlice = createSlice({
