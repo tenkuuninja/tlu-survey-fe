@@ -1,26 +1,32 @@
 import AccountApi from 'common/apis/account'
 import { removeAuth, updateAuthUser } from 'common/redux/slice/auth.slice'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 type Role = 'admin' | 'teacher' | 'student'
 
 export default function useAuth() {
   const auth = useSelector((state: any) => state.auth)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const role: Role = auth.role
 
   const handleLogin = async (user: any) => {
     dispatch(removeAuth())
     const res = await AccountApi.login(user)
-    localStorage.setItem('tlu:token', res?.token)
-    dispatch(updateAuthUser(res))
+    if (res?.token) {
+      localStorage.setItem('tlu:token', res?.token)
+      dispatch(updateAuthUser(res))
+      navigate('/dashboard')
+      toast.success('Đăng nhập thành công')
+    }
   }
 
   const handleRetrieveCurrentUser = async () => {
     const res = await AccountApi.getCurrentUser()
-    if (res?.token) {
-      localStorage.setItem('tlu:token', res?.token || '')
+    if (res?.role && res?.user) {
       dispatch(updateAuthUser(res))
     }
   }
