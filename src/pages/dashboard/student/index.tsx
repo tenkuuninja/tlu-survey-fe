@@ -1,17 +1,12 @@
 import {
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   InputAdornment,
+  Skeleton,
   TextField,
   Tooltip,
-  Skeleton,
 } from '@mui/material'
-import SurveyApi from 'common/apis/student'
+import StudentApi from 'common/apis/student'
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import {
@@ -32,10 +27,11 @@ const StudentDashboardPage = () => {
 
   const handleFetchStudent = async () => {
     setLoading(true)
-    const res = await SurveyApi.getAll(filter)
+    const res = await StudentApi.getAll(filter)
     setStudents(res.data)
     setLoading(false)
   }
+
   useEffect(() => {
     handleFetchStudent()
   }, [])

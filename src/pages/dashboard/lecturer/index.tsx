@@ -1,52 +1,56 @@
-import { Button, IconButton, Skeleton } from '@mui/material'
-import SurveyApi from 'common/apis/teacher'
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Skeleton,
+  TextField,
+  Tooltip,
+} from '@mui/material'
+import TeacherApi from 'common/apis/teacher'
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import {
+  AiOutlineDelete,
   AiOutlineEdit,
-  AiOutlineSearch,
   AiOutlinePlus,
+  AiOutlineSearch,
 } from 'react-icons/ai'
-import { Link } from 'react-router-dom'
+import DeleteDialog from './DeleteDialog'
 import EditDialog from './EditDialog'
 
-const LecturerDashboardPage = () => {
+const TeacherDashboardPage = () => {
   const [isLoading, setLoading] = useState(false)
-  const [lectures, setLectures] = useState<any[]>([])
-  const [lectureToUpdate, setLectureToUpdate] = useState<any>(null)
-  const [lectureToDelete, setLectureToDelete] = useState<any>(null)
+  const [filter, setFilter] = useState<any>({})
+  const [teachers, setTeachers] = useState<any[]>([])
+  const [itemToUpdate, setItemToUpdate] = useState<any>(null)
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
 
-  const handleFetchLecture = async() => {
+  const handleFetchTeacher = async () => {
     setLoading(true)
-    const res = await SurveyApi.getAll()
-    setLectures(res.data)
+    const res = await TeacherApi.getAll(filter)
+    setTeachers(res.data)
     setLoading(false)
   }
-
   useEffect(() => {
-    handleFetchLecture()
+    handleFetchTeacher()
   }, [])
 
   const columns = [
     {
-      name: 'Mã',
-      selector: (row) => row.code,
+      name: 'Mã giảng viên',
+      selector: (row) => row.id,
     },
     {
-      name:'Họ tên',
-      selector: (row) =>row.name,
+      name: 'Họ tên',
+      selector: (row) => row.name,
     },
     {
-      name: 'Khoa',
-      selector: (row) =>row.department_id,
+      name: 'Thuộc khoa',
+      selector: (row) => row.department?.code,
     },
     {
       name: 'Tên đăng nhập',
       selector: (row) => row.username,
-    },
-    {
-      name: 'Mật khẩu',
-      selector: (row) =>row.password_hashed,
     },
     {
       name: 'Email',
@@ -62,23 +66,31 @@ const LecturerDashboardPage = () => {
     },
     {
       name: 'Giới tính',
-      selector: (row) => row.sex,
-    },
-    {
-      name: 'Trạng thái',
-      selector: (row) => row.status,
+      selector: (row) => (row.sex === 1 ? 'Nam' : 'Nữ'),
     },
     {
       name: 'Hành động',
       selector: (row) => (
-        
-          <IconButton
-            size="small"
-            color="info"
-            onClick={() => setLectureToUpdate(row)}
-          >
-          <AiOutlineEdit/>
-          </IconButton>      
+        <>
+          <Tooltip arrow title="Sửa" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setItemToUpdate(row)}
+            >
+              <AiOutlineEdit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title="Xoá" placement="top">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => setItemToDelete(row)}
+            >
+              <AiOutlineDelete />
+            </IconButton>
+          </Tooltip>
+        </>
       ),
     },
   ]
@@ -86,16 +98,34 @@ const LecturerDashboardPage = () => {
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Giảng viên</h2>
-        <Button>
-        <AiOutlineSearch/>
-        </Button> 
-        <Button onClick={() => setLectureToUpdate({})}>
+        <h2 className="text-2xl font-semibold">Sinh viên</h2>
+        <Button onClick={() => setItemToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
       </div>
-      <div>
-      {isLoading && (
+      <div className="mt-4 flex items-center justify-end">
+        <TextField
+          size="small"
+          value={filter?.search || ''}
+          onChange={(e) => setFilter({ search: e.target.value })}
+          fullWidth
+          placeholder="Tìm kiếm"
+          sx={{ maxWidth: 300 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip arrow title="Tìm kiếm" placement="top">
+                  <IconButton onClick={handleFetchTeacher}>
+                    <AiOutlineSearch />
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
+      <div className="mt-10">
+        {isLoading && (
           <>
             {[...new Array(10)].map((item, i) => (
               <Skeleton
@@ -107,16 +137,22 @@ const LecturerDashboardPage = () => {
             ))}
           </>
         )}
-        {!isLoading && <DataTable data={lectures} columns={columns} />}
+        {!isLoading && <DataTable data={teachers} columns={columns} />}
       </div>
       <EditDialog
-        open={!!lectureToUpdate}
-        onClose={() => setLectureToUpdate(null)}
-        data={lectureToUpdate}
-        onSuccess={handleFetchLecture}
+        open={!!itemToUpdate}
+        onClose={() => setItemToUpdate(null)}
+        data={itemToUpdate}
+        onSuccess={handleFetchTeacher}
+      />
+      <DeleteDialog
+        open={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        data={itemToDelete}
+        onSuccess={handleFetchTeacher}
       />
     </div>
   )
 }
 
-export default LecturerDashboardPage
+export default TeacherDashboardPage
