@@ -1,9 +1,10 @@
+import { List, Popover } from '@mui/material'
+import ListItemButton from '@mui/material/ListItemButton'
 import useAuth from 'common/hooks/useAuth'
-import { AiOutlineUser } from 'react-icons/ai'
 import { useState } from 'react'
-import { List, ListItem, Menu, MenuItem, Popover } from '@mui/material'
-import ConfirmLogoutDialog from '../ConfirmLogoutDialog'
+import { AiOutlineUser } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
+import ConfirmLogoutDialog from '../ConfirmLogoutDialog'
 
 const AdminHeader = () => {
   const { user, role } = useAuth()
@@ -42,11 +43,13 @@ const AdminHeader = () => {
       >
         <List sx={{ width: 200 }}>
           <Link to="/dashboard/change-password">
-            <ListItem>Đổi mật khẩu</ListItem>
+            <ListItemButton>
+              <p className="text-neutral-700">Đổi mật khẩu</p>
+            </ListItemButton>
           </Link>
-          <ListItem onClick={() => setOpenConfirmLogoutModal(true)}>
+          <ListItemButton onClick={() => setOpenConfirmLogoutModal(true)}>
             Đăng xuất
-          </ListItem>
+          </ListItemButton>
         </List>
       </Popover>
       <ConfirmLogoutDialog
