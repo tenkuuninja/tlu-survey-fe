@@ -6,25 +6,27 @@ import {
   TextField,
   FormLabel,
 } from '@mui/material'
+import AccountApi from 'common/apis/account'
 import useAuth from 'common/hooks/useAuth'
 import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import * as yup from 'yup'
 
 const validationSchema = yup.object({
-  oldPassword: yup
+  old_password: yup
     .string()
     .required('Mật khẩu cũ không được để trống')
     .min(8, 'Bạn cần nhập tên đăng nhập dài hơn 8 kí tự'),
-  newPassword: yup
+  new_password: yup
     .string()
     .required('Mật khẩu mới không được để trống')
     .min(8, 'Bạn cần nhập tên đăng nhập dài hơn 8 kí tự'),
 })
 
 const initialValues = {
-  oldPassword: '',
-  newPassword: '',
+  old_password: '',
+  new_password: '',
 }
 
 const ChangePasswordDashboardPage = () => {
@@ -33,8 +35,11 @@ const ChangePasswordDashboardPage = () => {
     validationSchema,
     validateOnChange: false,
     validateOnBlur: false,
-    onSubmit(values) {
+    async onSubmit(values) {
       console.log('change password with', values)
+      await AccountApi.changePassword(values)
+      toast.success('Đổi mật khẩu thành công')
+      formik.resetForm()
     },
   })
 
@@ -49,11 +54,12 @@ const ChangePasswordDashboardPage = () => {
           <TextField
             className="mt-2"
             size="small"
-            name="oldPassword"
-            value={formik.values.oldPassword}
+            name="old_password"
+            type="password"
+            value={formik.values.old_password}
             onChange={formik.handleChange}
-            error={!!formik.errors.oldPassword}
-            helperText={formik.errors.oldPassword}
+            error={!!formik.errors.old_password}
+            helperText={formik.errors.old_password}
             placeholder="Nhập mật khẩu hiện tại"
             fullWidth
           />
@@ -65,16 +71,17 @@ const ChangePasswordDashboardPage = () => {
           <TextField
             className="mt-2"
             size="small"
-            name="newPassword"
-            value={formik.values.newPassword}
+            name="new_password"
+            type="password"
+            value={formik.values.new_password}
             onChange={formik.handleChange}
-            error={!!formik.errors.newPassword}
-            helperText={formik.errors.newPassword}
+            error={!!formik.errors.new_password}
+            helperText={formik.errors.new_password}
             placeholder="Nhập mật khẩu mới"
             fullWidth
           />
         </FormControl>
-        <Button type='submit' className="mt-10" variant="contained">
+        <Button type="submit" className="mt-10" variant="contained">
           Xác nhận
         </Button>
       </form>
