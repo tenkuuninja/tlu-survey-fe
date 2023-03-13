@@ -9,6 +9,10 @@ const AccountApi = {
     const res = await axios.get('/api/account/current-user')
     return res.data
   },
+  changePassword: async (body) => {
+    const res = await axios.post('/api/account/change-password', body)
+    return res.data
+  },
 }
 
 export default AccountApi

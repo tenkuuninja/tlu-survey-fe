@@ -2,7 +2,7 @@ import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import { createElement, useState } from 'react'
 import { IconType } from 'react-icons'
 import { Link, useLocation } from 'react-router-dom'
-import ConfirmLogoutDialog from './ConfirmLogoutDialog'
+import ConfirmLogoutDialog from '../ConfirmLogoutDialog'
 
 interface MenuItemProps {
   icon: IconType
