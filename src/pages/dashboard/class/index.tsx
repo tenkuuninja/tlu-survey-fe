@@ -8,6 +8,8 @@ import {
   DialogActions,
   Skeleton,
   TextField,
+  InputAdornment,
+  Tooltip,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import SurveyApi from 'common/apis/class'
@@ -18,21 +20,22 @@ import {
   AiOutlineEdit,
   AiOutlineEye,
   AiOutlinePlus,
+  AiOutlineSearch,
 } from 'react-icons/ai'
 import EditDialog from './EditDialog'
 import ListStudentDialog from './ListStudentDialog'
 
 const ClassDashboardPage = () => {
   const [isLoading, setLoading] = useState(false)
+  const [filter, setFilter] = useState<any>({})
   const [classes, setClasses] = useState<any[]>([])
   const [classToUpdate, setClassToUpdate] = useState<any>(null)
   const [listStudent, setListStudent] = useState<any>(null)
   const [classDeleteID, setClassDeleteID] = useState<any>(null)
   const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
-  const [search, setSearch] = useState()
   const handleFetchClass = async() => {
     setLoading(true)
-    const res = await SurveyApi.getAll()
+    const res = await SurveyApi.getAll(filter)
     setClasses(res.data)
     setLoading(false)
   }
@@ -112,12 +115,30 @@ const ClassDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Lớp học</h2>
-        <div>
-          <TextField size="small" placeholder="Tìm kiếm..." fullWidth />
-        </div>
         <Button onClick={() => setClassToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
+      </div>
+      <div className="mt-4 flex items-center justify-end">
+        <TextField
+          size="small"
+          value={filter?.search || ''}
+          onChange={(e) => setFilter({ search: e.target.value })}
+          fullWidth
+          placeholder="Tìm kiếm"
+          sx={{ maxWidth: 300 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip arrow title="Tìm kiếm" placement="top">
+                  <IconButton onClick={handleFetchClass}>
+                    <AiOutlineSearch />
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            ),
+          }}
+        />
       </div>
       <div>
       {isLoading && (

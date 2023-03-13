@@ -1,11 +1,16 @@
-import { Button, IconButton, Skeleton } from '@mui/material'
+import { 
+  Button, 
+  IconButton, 
+  Skeleton,
+  TextField,
+  InputAdornment,
+  Tooltip, } from '@mui/material'
 import SurveyApi from 'common/apis/subject'
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import {
   AiOutlineDelete,
   AiOutlineEdit,
-  AiOutlineEye,
   AiOutlinePlus,
   AiOutlineSearch,
 } from 'react-icons/ai'
@@ -14,13 +19,14 @@ import EditDialog from './EditDialog'
  
 const SubjectDashboardPage = () => {
   const [isLoading, setLoading] = useState(false)
+  const [filter, setFilter] = useState<any>({})
   const [subjects, setSubjects] = useState<any[]>([])
   const [subjectToUpdate, setSubjectToUpdate] = useState<any>(null)
   const [subjectToDelete, setSubjectToDelete] = useState<any>(null)
 
   const handleFetchSubject = async() => {
     setLoading(true)
-    const res = await SurveyApi.getAll()
+    const res = await SurveyApi.getAll(filter)
     setSubjects(res.data)
     setLoading(false)
   }
@@ -77,13 +83,33 @@ const SubjectDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Môn học</h2>
-        <Button>
-        <AiOutlineSearch/>
-        </Button> 
         <Button onClick={() => setSubjectToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
-      </div>
+        </div>
+        <div className="mt-4 flex items-center justify-end">   
+        <TextField
+          size="small"
+          value={filter?.search || ''}
+          onChange={(e) => setFilter({ search: e.target.value })}
+          fullWidth
+          placeholder="Tìm kiếm"
+          sx={{ maxWidth: 300 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <Tooltip arrow title="Tìm kiếm" placement="top">
+                  <IconButton onClick={handleFetchSubject}>
+                    <AiOutlineSearch />
+                  </IconButton>
+                </Tooltip>
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div> 
+        
+      
       <div>
       {isLoading && (
           <>

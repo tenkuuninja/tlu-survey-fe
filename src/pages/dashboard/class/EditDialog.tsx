@@ -1,48 +1,106 @@
 import {
-    Dialog,
-    Button,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    FormControl,
-    FormLabel,
-    TextField,
-    Grid,
-  } from '@mui/material'
-  import { useFormik } from 'formik'
-  import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai'
-  import * as yup from 'yup'
+  Dialog,
+  Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControl,
+  FormLabel,
+  TextField,
+  Grid,
+  Select,
+  MenuItem,
+  FormHelperText,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from '@mui/material'
+import DepartmentApi from 'common/apis/department'
+import ClassApi from 'common/apis/class'
+import { useFormik } from 'formik'
+import { useState, useEffect } from 'react'
+import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai'
+import { toast } from 'react-toastify'
+import * as yup from 'yup'
   
   const validationSchema = yup.object({})
   
   const initialValues = {
+    code:'',
     name: '',
-    startday: '',
-    endday: '',
-    lecture: '',
-    subject: '',
-    department: '',
+    subject_id:'',
+    teacher_id: '',
+    status:'',
   }
   const EditDialog = ({ open, onClose, data, onSuccess }) => {
+    const [isLoading, setLoading] = useState(false)
     const isUpdate = !!data?.id
+  
+    const validationSchema = yup.object({
+      code: yup
+        .string()
+        .required('Mã lớp không được để trống'),
+        name: yup.string().required('Tên không được để trống'),
+      subject_id: yup
+        .string()
+        .required('Mã môn không được để trống'),
+      teacher_id:yup
+        .string()
+        .required('Mã giảng viên không được để trống'),
+      status: yup.string().required('Trạng thái không được để trống'),
+    })
   
     const formik = useFormik({
       initialValues,
       validationSchema,
       validateOnChange: false,
       validateOnBlur: false,
-      onSubmit(values) {
-        console.log('create user with', values)
-        onSuccess && onSuccess()
+      async onSubmit(values) {
+        setLoading(true)
+        try {
+          if (isUpdate) {
+            await ClassApi.updateById(data.id, values)
+          } else {
+            await ClassApi.create(values)
+          }
+          onSuccess && onSuccess()
+          onClose()
+          toast.success((isUpdate ? 'Sửa' : 'Tạo') + ' lớp học thành công')
+        } catch (error) {
+          // toast.error('Đã có lỗi xảy ra')
+        }
+        setLoading(false)
       },
     })
   
+    console.log(formik.values)
+  
+    useEffect(() => {
+      formik.resetForm()
+      formik.setValues(data?.id ? data : initialValues)
+    }, [data])
+  
     return (
       <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-        <DialogTitle>{isUpdate ? 'Sửa' : 'Thêm'} Giảng viên</DialogTitle>
-        <DialogContent>
-          <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formik.handleSubmit}>
+          <DialogTitle>{isUpdate ? 'Sửa' : 'Thêm'} sinh viên</DialogTitle>
+          <DialogContent>
             <Grid container spacing={[2, 2]}>
+            <Grid item md={6}>
+                <FormControl fullWidth>
+                  <FormLabel>Mã lớp</FormLabel>
+                  <TextField
+                    size="small"
+                    name="code"
+                    value={formik.values.code}
+                    onChange={formik.handleChange}
+                    error={!!formik.errors.code}
+                    helperText={formik.errors.code}
+                    placeholder="Nhập mã lớp"
+                    fullWidth
+                  />
+                </FormControl>
+              </Grid>
               <Grid item md={6}>
                 <FormControl fullWidth>
                   <FormLabel>Tên lớp</FormLabel>
@@ -60,88 +118,79 @@ import {
               </Grid>
               <Grid item md={6}>
                 <FormControl fullWidth>
-                  <FormLabel>Ngày bắt đầu</FormLabel>
+                  <FormLabel>Môn học</FormLabel>
                   <TextField
                     size="small"
-                    name="email"
-                    value={formik.values.startday}
+                    name="subject_id"
+                    value={formik.values.subject_id}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.startday}
-                    helperText={formik.errors.startday}
-                    placeholder="Nhập ngày bắt đầu"
+                    error={!!formik.errors.subject_id}
+                    helperText={formik.errors.subject_id}
+                    placeholder="Nhập môn học"
                     fullWidth
                   />
                 </FormControl>
               </Grid>
-              <Grid item md={6}>
-                <FormControl fullWidth>
-                  <FormLabel>Ngày bắt đầu</FormLabel>
-                  <TextField
-                    size="small"
-                    name="address"
-                    value={formik.values.endday}
-                    onChange={formik.handleChange}
-                    error={!!formik.errors.endday}
-                    helperText={formik.errors.endday}
-                    placeholder="Nhập ngày kết thúc"
-                    fullWidth
-                  />
-                </FormControl>
-              </Grid>
+  
               <Grid item md={6}>
                 <FormControl fullWidth>
                   <FormLabel>Giảng viên</FormLabel>
                   <TextField
                     size="small"
-                    name="phoneNumber"
-                    value={formik.values.lecture}
+                    name="teacher_id"
+                    value={formik.values.teacher_id}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.lecture}
-                    helperText={formik.errors.lecture}
-                    placeholder="Nhập ngày kết thúc"
+                    error={!!formik.errors.teacher_id}
+                    helperText={formik.errors.teacher_id}
+                    placeholder="Nhập giảng viên"
                     fullWidth
                   />
                 </FormControl>
               </Grid>
               <Grid item md={6}>
-                <FormControl fullWidth>
-                  <FormLabel>Tên môn</FormLabel>
-                  <TextField
-                    size="small"
-                    name="sex"
-                    value={formik.values.subject}
-                    onChange={formik.handleChange}
-                    error={!!formik.errors.subject}
-                    placeholder="Nhập tên môn học"
-                    fullWidth
-                  >
-                </TextField>
-                </FormControl>
-              </Grid>
-              <Grid item md={6}>
-                <FormControl fullWidth>
-                  <FormLabel>Tên khoa</FormLabel>
-                  <TextField
-                    size="small"
-                    name="status"
-                    value={formik.values.department}
-                    onChange={formik.handleChange}
-                    error={!!formik.errors.department}
-                    helperText={formik.errors.department}
-                    placeholder="Nhập khoa"
-                    fullWidth
+                <FormLabel>Trạng thái</FormLabel>
+                <RadioGroup
+                  row
+                  name="status"
+                  value={formik.values.status}
+                  onChange={formik.handleChange}
+                >
+                  <FormControlLabel
+                    value={1}
+                    control={<Radio />}
+                    label="Chưa mở"
                   />
-                </FormControl>
+                  <FormControlLabel
+                    value={2}
+                    control={<Radio />}
+                    label="Đang mở"
+                  />
+                  <FormControlLabel
+                    value={3}
+                    control={<Radio />}
+                    label="Đã đóng"
+                  />
+                </RadioGroup>
+                {!!formik.errors.status && (
+                  <FormHelperText error={true}>
+                    {formik.errors.status}
+                  </FormHelperText>
+                )}
               </Grid>
             </Grid>
-          </form>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Hủy</Button>
-          <Button type="submit" variant="contained" startIcon={isUpdate ? <AiOutlineEdit /> : <AiOutlinePlus/>}>
-            {isUpdate ? 'Sửa' : 'Thêm'}
-          </Button>
-        </DialogActions>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={onClose}>Hủy</Button>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              variant="contained"
+              startIcon={isUpdate ? <AiOutlineEdit /> : <AiOutlinePlus />}
+            >
+              {isUpdate ? 'Sửa' : 'Thêm'}
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     )
   }
