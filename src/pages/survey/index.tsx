@@ -65,6 +65,7 @@ const SurveyPage = () => {
                 item?.question_id === qid,
             )
           ) {
+            setSubmited(false)
             return toast.warning('Các trường có dấu * không được để trống')
           }
         }
