@@ -24,6 +24,7 @@ import {
 } from 'react-icons/ai'
 import EditDialog from './EditDialog'
 import ListStudentDialog from './ListStudentDialog'
+import DeleteDialog from './DeleteDialog'
 
 const ClassDashboardPage = () => {
   const [isLoading, setLoading] = useState(false)
@@ -31,8 +32,9 @@ const ClassDashboardPage = () => {
   const [classes, setClasses] = useState<any[]>([])
   const [classToUpdate, setClassToUpdate] = useState<any>(null)
   const [listStudent, setListStudent] = useState<any>(null)
-  const [classDeleteID, setClassDeleteID] = useState<any>(null)
-  const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
+  const [classDelete, setClassDelete] = useState<any>(null)
+  
+  
   const handleFetchClass = async() => {
     setLoading(true)
     const res = await SurveyApi.getAll(filter)
@@ -44,23 +46,6 @@ const ClassDashboardPage = () => {
   useEffect(() => {
     handleFetchClass()
   }, [])
-
-  const handleClose = () => {
-    setOpenConfirmDeleteModal(false)
-  }
-
-  const handleClickDelete = (id) => {
-    setClassDeleteID(id)
-    setOpenConfirmDeleteModal(true)
-  }
-
-  const handleDeleteClass = () => {
-    setClasses((pre) => {
-      const newArray = [...pre]
-      return newArray.filter((classes) => classes.id !== classDeleteID)
-    })
-    setOpenConfirmDeleteModal(false)
-  }
 
   const columns = [
     {
@@ -87,26 +72,35 @@ const ClassDashboardPage = () => {
       name: 'Hành động',
       selector: (row) => (
         <>
-          <Link to={`/survey/${row?.id}`} target="_blank">
-            <IconButton size="small" color="info">
+        <Tooltip arrow title="Xem" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setListStudent(row)}
+            >
               <AiOutlineEye />
             </IconButton>
-          </Link>
-          <IconButton
-            size="small"
-            color="info"
-            onClick={() => setClassToUpdate(row)}
-          >
-            <AiOutlineEdit />
-          </IconButton>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => handleClickDelete(row.id)}
-          >
-            <AiOutlineDelete />
-          </IconButton>
+          </Tooltip>
+        <Tooltip arrow title="Sửa" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setClassToUpdate(row)}
+            >
+              <AiOutlineEdit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title="Xoá" placement="top">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => setClassDelete(row)}
+            >
+              <AiOutlineDelete />
+            </IconButton>
+          </Tooltip>
         </>
+        
       ),
     },
   ]
@@ -167,30 +161,12 @@ const ClassDashboardPage = () => {
         data={classToUpdate}
         onSuccess={handleFetchClass}
       />
-      <Dialog
-        open={isOpenConfirmDeleteModal}
-        onClose={handleClose}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>Xác nhận xóa lớp học</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Bạn có chắc muốn xóa lớp học này không??
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Hủy</Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleDeleteClass}
-            startIcon={<AiOutlineDelete />}
-          >
-            Xóa
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteDialog
+        open={!!classDelete}
+        onClose={() => setClassDelete(null)}
+        data={classDelete}
+        onSuccess={handleFetchClass}
+      />
     </div>
   )
 }

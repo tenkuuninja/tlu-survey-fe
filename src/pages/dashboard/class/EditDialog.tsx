@@ -23,8 +23,6 @@ import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import * as yup from 'yup'
   
-  const validationSchema = yup.object({})
-  
   const initialValues = {
     code:'',
     name: '',
@@ -34,6 +32,7 @@ import * as yup from 'yup'
   }
   const EditDialog = ({ open, onClose, data, onSuccess }) => {
     const [isLoading, setLoading] = useState(false)
+    const [departments, setDepartments] = useState<any[]>([])
     const isUpdate = !!data?.id
   
     const validationSchema = yup.object({
@@ -74,7 +73,15 @@ import * as yup from 'yup'
     })
   
     console.log(formik.values)
-  
+
+    useEffect(() => {
+      const handleFetchDepartments = async () => {
+        const res = await DepartmentApi.getAll()
+        setDepartments(res.data)
+      }
+      handleFetchDepartments()
+    }, [])
+
     useEffect(() => {
       formik.resetForm()
       formik.setValues(data?.id ? data : initialValues)
