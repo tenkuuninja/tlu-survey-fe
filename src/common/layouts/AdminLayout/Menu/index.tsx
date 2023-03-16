@@ -1,7 +1,10 @@
+import useAuth from 'common/hooks/useAuth'
 import MenuItem from './MenuItem'
 import navigation from './navigation'
 
 const AdminMenu = () => {
+  const { role } = useAuth()
+
   return (
     <div className="h-full w-full border-r border-neutral-100 bg-white">
       {navigation.map((item, i) => (
@@ -9,9 +12,11 @@ const AdminMenu = () => {
           <p className="px-6 py-3 text-xs font-medium text-neutral-500" key={i}>
             {item.label}
           </p>
-          {item?.children?.map((subItem, j) => (
-            <MenuItem {...subItem} />
-          ))}
+          {item?.children
+            ?.filter((item) => item?.roles?.includes(role))
+            ?.map((subItem, j) => (
+              <MenuItem {...subItem} />
+            ))}
         </>
       ))}
     </div>
