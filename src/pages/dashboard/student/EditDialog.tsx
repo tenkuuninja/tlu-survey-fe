@@ -29,7 +29,7 @@ const initialValues = {
   address: '',
   department_id: null,
   name: '',
-  password_hashed: '',
+  password: '',
   phone_number: '',
   sex: '',
   status: '',
@@ -52,7 +52,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
     department_id: yup.mixed().required('Khoa không được để trống'),
     name: yup.string().required('Tên không được để trống'),
     address: yup.string().required('địa chỉ không được để trống'),
-    password_hashed: isUpdate
+    password: isUpdate
       ? yup.string().min(8, 'Mật khẩu phải có độ dài tối thiếu 8 ký tự')
       : yup
           .string()
@@ -196,12 +196,12 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 <FormLabel>Mật khẩu</FormLabel>
                 <TextField
                   size="small"
-                  name="password_hashed"
+                  name="password"
                   type="password"
-                  value={formik.values.password_hashed}
+                  value={formik.values.password}
                   onChange={formik.handleChange}
-                  error={!!formik.errors.password_hashed}
-                  helperText={formik.errors.password_hashed}
+                  error={!!formik.errors.password}
+                  helperText={formik.errors.password}
                   placeholder="Nhập mật khẩu"
                   fullWidth
                 />
