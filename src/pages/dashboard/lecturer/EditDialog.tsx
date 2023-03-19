@@ -9,6 +9,8 @@ import {
   FormHelperText,
   FormLabel,
   Grid,
+  IconButton,
+  InputAdornment,
   MenuItem,
   Radio,
   RadioGroup,
@@ -19,36 +21,41 @@ import DepartmentApi from 'common/apis/department'
 import TeacherApi from 'common/apis/teacher'
 import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
-import { AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai'
+import {
+  AiOutlineEdit,
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiOutlinePlus,
+} from 'react-icons/ai'
 import { toast } from 'react-toastify'
 import * as yup from 'yup'
 
 const initialValues = {
+  code: '',
   username: '',
-  email: '',
+  citizen_id: '',
   address: '',
   department_id: null,
   name: '',
   password: '',
   phone_number: '',
   sex: '',
-  status: '',
+  status: 1,
 }
 
 const EditDialog = ({ open, onClose, data, onSuccess }) => {
   const [isLoading, setLoading] = useState(false)
+  const [iShowPassword, setShowPassword] = useState(false)
   const [departments, setDepartments] = useState<any[]>([])
   const isUpdate = !!data?.id
 
   const validationSchema = yup.object({
+    code: yup.string().required('Mã giảng viên không được để trống'),
     username: yup
       .string()
       .required('Tên đăng nhập không được để trống')
       .min(8, 'Tên đăng nhập phải có độ dài tối thiếu 8 ký tự'),
-    email: yup
-      .string()
-      .required('Email không được để trống')
-      .email('Email chưa đúng định dạng'),
+    citizen_id: yup.string().required('Căn cước công dân không được để trống'),
     department_id: yup.mixed().required('Khoa không được để trống'),
     name: yup.string().required('Tên không được để trống'),
     address: yup.string().required('địa chỉ không được để trống'),
@@ -58,7 +65,13 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
           .string()
           .required('Mật khẩu không được để trống')
           .min(8, 'Mật khẩu phải có độ dài tối thiếu 8 ký tự'),
-    phone_number: yup.string().required('Số điện thoại không được để trống'),
+    phone_number: yup
+      .string()
+      .required('Số điện thoại không được để trống')
+      .matches(
+        /^(84|0[3|5|7|8|9])+([0-9]{8})$/g,
+        'Số điện thoại chưa đúng định dạng',
+      ),
     sex: yup.string().required('Giới tính không được để trống'),
     status: yup.string().required('Trạng thái không được để trống'),
   })
@@ -124,15 +137,15 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
             </Grid>
             <Grid item md={6}>
               <FormControl fullWidth>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Căn cước công dân</FormLabel>
                 <TextField
                   size="small"
-                  name="email"
-                  value={formik.values.email}
+                  name="citizen_id"
+                  value={formik.values.citizen_id}
                   onChange={formik.handleChange}
-                  error={!!formik.errors.email}
-                  helperText={formik.errors.email}
-                  placeholder="Nhập email"
+                  error={!!formik.errors.citizen_id}
+                  helperText={formik.errors.citizen_id}
+                  placeholder="Nhập căn cước công dân"
                   fullWidth
                 />
               </FormControl>
@@ -144,6 +157,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 <Select
                   size="small"
                   name="department_id"
+                  disabled={isUpdate}
                   value={formik.values.department_id}
                   onChange={formik.handleChange}
                 >
@@ -158,6 +172,38 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                     {formik.errors.department_id}
                   </FormHelperText>
                 )}
+              </FormControl>
+            </Grid>
+            <Grid item md={6}>
+              <FormControl fullWidth>
+                <FormLabel>Mã giảng viên</FormLabel>
+                <TextField
+                  size="small"
+                  name="code"
+                  disabled={isUpdate}
+                  value={formik.values.code}
+                  onChange={formik.handleChange}
+                  error={!!formik.errors.code}
+                  helperText={formik.errors.code}
+                  placeholder="Nhập mã giảng viên"
+                  fullWidth
+                />
+              </FormControl>
+            </Grid>
+
+            <Grid item md={6}>
+              <FormControl fullWidth>
+                <FormLabel>Địa chỉ</FormLabel>
+                <TextField
+                  size="small"
+                  name="address"
+                  value={formik.values.address}
+                  onChange={formik.handleChange}
+                  error={!!formik.errors.address}
+                  helperText={formik.errors.address}
+                  placeholder="Nhập địa chỉ"
+                  fullWidth
+                />
               </FormControl>
             </Grid>
             <Grid item md={6}>
@@ -198,32 +244,31 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                   size="small"
                   name="password"
                   type="password"
+                  autoComplete="new-password"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   error={!!formik.errors.password}
                   helperText={formik.errors.password}
-                  placeholder="Nhập mật khẩu"
+                  placeholder={'Nhập mật khẩu' + (isUpdate ? ' mới' : '')}
                   fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!iShowPassword)}
+                        >
+                          {iShowPassword ? (
+                            <AiOutlineEyeInvisible />
+                          ) : (
+                            <AiOutlineEye />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </FormControl>
             </Grid>
-
-            <Grid item md={6}>
-              <FormControl fullWidth>
-                <FormLabel>Địa chỉ</FormLabel>
-                <TextField
-                  size="small"
-                  name="address"
-                  value={formik.values.address}
-                  onChange={formik.handleChange}
-                  error={!!formik.errors.address}
-                  helperText={formik.errors.address}
-                  placeholder="Nhập địa chỉ"
-                  fullWidth
-                />
-              </FormControl>
-            </Grid>
-            <Grid item md={6}></Grid>
 
             <Grid item md={6}>
               <FormLabel>Giới tính</FormLabel>
@@ -242,31 +287,34 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 </FormHelperText>
               )}
             </Grid>
-            <Grid item md={6}>
-              <FormLabel>Trạng thái</FormLabel>
-              <RadioGroup
-                row
-                name="status"
-                value={formik.values.status}
-                onChange={formik.handleChange}
-              >
-                <FormControlLabel
-                  value={1}
-                  control={<Radio />}
-                  label="Đang làm việc"
-                />
-                <FormControlLabel
-                  value={2}
-                  control={<Radio />}
-                  label="Đã nghỉ việc"
-                />
-              </RadioGroup>
-              {!!formik.errors.status && (
-                <FormHelperText error={true}>
-                  {formik.errors.status}
-                </FormHelperText>
-              )}
-            </Grid>
+
+            {isUpdate && (
+              <Grid item md={6}>
+                <FormLabel>Trạng thái</FormLabel>
+                <RadioGroup
+                  row
+                  name="status"
+                  value={formik.values.status}
+                  onChange={formik.handleChange}
+                >
+                  <FormControlLabel
+                    value={1}
+                    control={<Radio />}
+                    label="Đang làm việc"
+                  />
+                  <FormControlLabel
+                    value={2}
+                    control={<Radio />}
+                    label="Đã nghỉ việc"
+                  />
+                </RadioGroup>
+                {!!formik.errors.status && (
+                  <FormHelperText error={true}>
+                    {formik.errors.status}
+                  </FormHelperText>
+                )}
+              </Grid>
+            )}
           </Grid>
         </DialogContent>
         <DialogActions>

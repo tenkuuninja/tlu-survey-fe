@@ -1,7 +1,6 @@
 import { Button, FormControl, MenuItem, Select, TextField } from '@mui/material'
 import useAuth from 'common/hooks/useAuth'
 import { useFormik } from 'formik'
-import { useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 
 const validationSchema = yup.object({
@@ -23,7 +22,6 @@ const initialValues = {
 
 const LoginPage = () => {
   const { login } = useAuth()
-  const navigate = useNavigate()
 
   const formik = useFormik({
     initialValues,
@@ -66,7 +64,7 @@ const LoginPage = () => {
               onChange={formik.handleChange}
               error={!!formik.errors.username}
               helperText={formik.errors.username}
-              placeholder="Nhập email của bạn"
+              placeholder="Nhập tên đăng nhập của bạn"
               fullWidth
             />
           </FormControl>

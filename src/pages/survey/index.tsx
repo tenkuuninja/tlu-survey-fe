@@ -22,9 +22,6 @@ const SurveyPage = () => {
   const params: any = useParams()
   const { user, role } = useAuth()
 
-  const teacherId = role === 'teacher' ? user.id : null
-  const studentId = role === 'student' ? user.id : null
-
   const id = +params?.slug
 
   const formik = useFormik({
@@ -72,16 +69,12 @@ const SurveyPage = () => {
         console.log('form', values, answers, requiredQuestionIds)
         await SurveyApi.submitFormSurvey({
           answers,
-          teacher_section: {
-            teacher_id: teacherId,
+          section: {
+            user_id: user.id,
             survey_id: id,
           },
-          student_section: {
-            student_id: studentId,
-            survey_id: id,
-          },
-          type: role,
         })
+        toast.success('Gửi thành công')
       } catch (error) {
         toast.error('Đã có lỗi xảy ra')
         setSubmited(false)
@@ -92,18 +85,19 @@ const SurveyPage = () => {
   useEffect(() => {
     const handleGetSurvey = async () => {
       setLoading(true)
-      const res = await SurveyApi.getById(id)
-      setSurvey(res?.data)
+      const resSurvey = await SurveyApi.getById(id)
+      setSurvey(resSurvey?.data)
       formik.setValues(
-        res?.data?.questions?.map((item) => ({
-          teacher_id: teacherId,
-          student_id: studentId,
+        resSurvey?.data?.questions?.map((item) => ({
+          user_id: user.id,
+          survey_id: resSurvey?.data?.id,
           question_id: item?.id || null,
           option_id: null,
           option_ids: [],
           answer_text: null,
         })),
       )
+      // const resAnswer = await SurveyApi.getById(id)
       setLoading(false)
     }
     if (!Number.isNaN(id)) {

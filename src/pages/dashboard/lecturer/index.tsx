@@ -38,7 +38,7 @@ const TeacherDashboardPage = () => {
   const columns = [
     {
       name: 'Mã giảng viên',
-      selector: (row) => row.id,
+      selector: (row) => row.code,
     },
     {
       name: 'Họ tên',

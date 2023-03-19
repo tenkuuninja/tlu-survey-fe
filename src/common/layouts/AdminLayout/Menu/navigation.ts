@@ -63,7 +63,7 @@ export default [
         label: 'Đổi mật khẩu',
         path: '/dashboard/change-password',
         icon: AiOutlineKey,
-        roles: ['admin', 'teacher', 'student'],
+        roles: ['teacher', 'student'],
       },
       {
         label: 'Đăng xuất',

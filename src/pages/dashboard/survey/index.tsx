@@ -15,6 +15,7 @@ import {
   AiOutlineEye,
   AiOutlinePlus,
   AiOutlineSearch,
+  AiFillCaretRight,
 } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import DeleteDialog from './DeleteDialog'
@@ -62,7 +63,7 @@ const SurveyDashboardPage = () => {
           <Link to={`/survey/${row?.id}`} target="_blank">
             <Tooltip arrow title="Khảo sát" placement="top">
               <IconButton size="small" color="info">
-                <AiOutlineEye />
+                <AiFillCaretRight />
               </IconButton>
             </Tooltip>
           </Link>
