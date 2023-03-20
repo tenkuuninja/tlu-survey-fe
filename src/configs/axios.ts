@@ -2,7 +2,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 
 const customAxios = axios.create({
-  baseURL: process.env.REACT_PUBLIC_API_URL || 'http://localhost:8000',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
 })
 
 customAxios.interceptors.request.use(
