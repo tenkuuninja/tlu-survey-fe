@@ -1999,28 +1999,6 @@
     prop-types "^15.8.1"
     react-is "^18.2.0"
 
-"@mui/utils@^5.11.13":
-  version "5.11.13"
-  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-5.11.13.tgz#8d7317f221e8973200764820fa7f2a622dbc7150"
-  integrity sha512-5ltA58MM9euOuUcnvwFJqpLdEugc9XFsRR8Gt4zZNb31XzMfSKJPR4eumulyhsOTK1rWf7K4D63NKFPfX0AxqA==
-  dependencies:
-    "@babel/runtime" "^7.21.0"
-    "@types/prop-types" "^15.7.5"
-    "@types/react-is" "^16.7.1 || ^17.0.0"
-    prop-types "^15.8.1"
-    react-is "^18.2.0"
-
-"@mui/x-data-grid@^6.0.2":
-  version "6.0.2"
-  resolved "https://registry.yarnpkg.com/@mui/x-data-grid/-/x-data-grid-6.0.2.tgz#84b0a3865fdd54c43df14db1bc02ea5792a7d4f0"
-  integrity sha512-VCr1hvW5k1zekovTvyB0PxfGGTueAgemkcaFZPDKJP0uTCAyJ69f+vyz9OzDJzbpb58U2onis4tQJETkHnyofg==
-  dependencies:
-    "@babel/runtime" "^7.20.13"
-    "@mui/utils" "^5.11.13"
-    clsx "^1.2.1"
-    prop-types "^15.8.1"
-    reselect "^4.1.7"
-
 "@mui/x-date-pickers@^5.0.20":
   version "5.0.20"
   resolved "https://registry.npmjs.org/@mui/x-date-pickers/-/x-date-pickers-5.0.20.tgz"

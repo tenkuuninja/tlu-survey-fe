@@ -19,12 +19,14 @@ interface SurveyResult {
   survey: any
   answers: any[]
   hideAlert?: boolean
+  hideHeader?: boolean
 }
 
 export default function SurveyResult({
   survey,
   answers,
   hideAlert = false,
+  hideHeader = false,
 }: SurveyResult) {
   const [isLoading, setLoading] = useState(true)
   const params: any = useParams()
@@ -41,18 +43,21 @@ export default function SurveyResult({
       }, {}),
     [answers],
   )
-  console.log('answerObj', answerObj)
+
+  console.log('answerObj', { answerObj, survey })
 
   return (
     <form className="mx-auto max-w-[576px] py-4">
-      <Paper sx={{ p: 2 }}>
-        <h1 className="text-[28px]">{survey?.title}</h1>
-        {!hideAlert && (
-          <p className="mt-4 rounded-md border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-600">
-            Câu trả lời của bạn đã được ghi lại.
-          </p>
-        )}
-      </Paper>
+      {!hideHeader && (
+        <Paper sx={{ p: 2 }}>
+          <h1 className="text-[28px]">{survey?.title}</h1>
+          {!hideAlert && (
+            <p className="mt-4 rounded-md border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-600">
+              Câu trả lời của bạn đã được ghi lại.
+            </p>
+          )}
+        </Paper>
+      )}
       {survey?.questions.map((question, i) => (
         <Paper className="" sx={{ p: 2, mt: 2 }} key={i}>
           <h3>{question?.title} </h3>
@@ -103,10 +108,10 @@ export default function SurveyResult({
                 size="small"
                 name={`[${i}].option_id`}
                 sx={{ width: 300, mt: 2 }}
-                value={answerObj?.[question?.id]?.[0]?.option_id}
+                value={+answerObj?.[question?.id]?.[0]?.option_id}
               >
                 {question?.options?.map((option, j) => (
-                  <MenuItem value={option.id} key={j}>
+                  <MenuItem value={+option.id} key={j}>
                     {option?.title}
                   </MenuItem>
                 ))}

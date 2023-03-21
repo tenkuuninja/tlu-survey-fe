@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Skeleton,
   Switch,
   TextField,
 } from '@mui/material'
@@ -56,6 +57,7 @@ const initialValues = {
 }
 
 const SettingDialog = ({ open, onClose, data, onSuccess }) => {
+  const [isSubmitLoading, setSubmitLoading] = useState(false)
   const [isLoading, setLoading] = useState(false)
   const [classes, setClasses] = useState<any[]>([])
   const [students, setStudents] = useState<any[]>([])
@@ -65,23 +67,20 @@ const SettingDialog = ({ open, onClose, data, onSuccess }) => {
     validateOnChange: false,
     validateOnBlur: false,
     async onSubmit(values) {
-      setLoading(true)
+      setSubmitLoading(true)
       try {
         const body: any = { ...values, classes: undefined, students: undefined }
         body.class_ids = values?.classes?.map((item) => item.id)
-        body.user_surveys = values?.students?.map((item) => ({
-          user_id: item?.id,
-          survey_id: data?.id,
-        }))
+        body.student_ids = values?.students?.map((item) => item?.id)
         console.log(body)
         // onClose()
-        // onSuccess && onSuccess()
+        onSuccess && onSuccess()
         await SurveyApi.updateSurveyOption(data?.id, body)
         toast.success('Cập nhật cài đặt khảo sát thành công')
       } catch (error) {
         toast.error('Đã xảy ra lỗi không xác định')
       }
-      setLoading(false)
+      setSubmitLoading(false)
     },
   })
 
@@ -96,8 +95,26 @@ const SettingDialog = ({ open, onClose, data, onSuccess }) => {
   }
 
   useEffect(() => {
-    formik.resetForm()
-    formik.setValues(data?.options ? data?.options : initialValues)
+    const handleGetOption = async () => {
+      setLoading(true)
+      try {
+        formik.resetForm()
+        if (data?.id) {
+          const option = await SurveyApi.getSurveyOption(data?.id)
+          formik.setValues(
+            option?.data
+              ? {
+                  ...option?.data,
+                  students: option?.students || [],
+                  classes: option?.classes || [],
+                }
+              : initialValues,
+          )
+        }
+      } catch (error) {}
+      setLoading(false)
+    }
+    handleGetOption()
   }, [data])
 
   useEffect(() => {
@@ -105,111 +122,113 @@ const SettingDialog = ({ open, onClose, data, onSuccess }) => {
     handleGetStudentOptions()
   }, [])
 
+  const content = (
+    <DialogContent className="">
+      {options.map((item, i) => (
+        <label
+          className="flex cursor-pointer items-center justify-between py-3 transition-all hover:bg-neutral-50"
+          htmlFor={item.field}
+          key={i}
+        >
+          <div>
+            <p className="font-medium">{item.title}</p>
+            <p className="text-sm text-neutral-600">{item.description}</p>
+          </div>
+          <Switch
+            checked={!!formik.values[item?.field]}
+            onChange={(e) =>
+              formik.setFieldValue(item?.field, e.target.checked)
+            }
+            id={item.field}
+          />
+        </label>
+      ))}
+      {!formik.values.public && (
+        <div className="py-3">
+          <h3 className="font-medium">Lớp học được phép tham gia khảo sát</h3>
+          <Autocomplete
+            options={classes}
+            getOptionLabel={(option) => option?.name}
+            isOptionEqualToValue={(o, v) => o?.id === v?.id}
+            size="small"
+            value={null}
+            className="mt-2"
+            onInputChange={async (e, value) => handleGetClassOptions(value)}
+            onChange={(e, value) => {
+              formik.setFieldValue('classes', [
+                value,
+                ...formik.values.classes.filter(
+                  (item) => item?.id != value?.id,
+                ),
+              ])
+            }}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Nhập lớp để thêm" value="" />
+            )}
+          />
+          <div className="mt-4">
+            {formik.values.classes?.map((item, i) => (
+              <div key={i}>{item?.name}</div>
+            ))}
+          </div>
+        </div>
+      )}
+      {!formik.values.public && (
+        <div className="py-3">
+          <h3 className="font-medium">Sinh viên được phép tham gia khảo sát</h3>
+          <Autocomplete
+            options={students}
+            getOptionLabel={(option) => option?.name}
+            isOptionEqualToValue={(o, v) => o?.id === v?.id}
+            size="small"
+            value={null}
+            className="mt-2"
+            onInputChange={async (e, value) => handleGetStudentOptions(value)}
+            onChange={(e, value) => {
+              formik.setFieldValue('students', [
+                value,
+                ...formik.values.students.filter(
+                  (item) => item?.id != value?.id,
+                ),
+              ])
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder="Nhập sinh viên để thêm"
+                value=""
+              />
+            )}
+          />
+          <div className="mt-4">
+            {formik.values.students?.map((item, i) => (
+              <div key={i}>{item?.name}</div>
+            ))}
+          </div>
+        </div>
+      )}
+    </DialogContent>
+  )
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <form onSubmit={formik.handleSubmit}>
         <DialogTitle>Cài đặt biểu mẫu</DialogTitle>
-        <DialogContent className="">
-          {options.map((item, i) => (
-            <label
-              className="flex cursor-pointer items-center justify-between py-3 transition-all hover:bg-neutral-50"
-              htmlFor={item.field}
-              key={i}
-            >
-              <div>
-                <p className="font-medium">{item.title}</p>
-                <p className="text-sm text-neutral-600">{item.description}</p>
-              </div>
-              <Switch
-                checked={!!formik.values[item?.field]}
-                onChange={(e) =>
-                  formik.setFieldValue(item?.field, e.target.checked)
-                }
-                id={item.field}
-              />
-            </label>
-          ))}
-          {!formik.values.public && (
-            <div className="py-3">
-              <h3 className="font-medium">
-                Lớp học được phép tham gia khảo sát
-              </h3>
-              <Autocomplete
-                options={classes}
-                getOptionLabel={(option) => option?.name}
-                isOptionEqualToValue={(o, v) => o?.id === v?.id}
-                size="small"
-                value={null}
-                className="mt-2"
-                onInputChange={async (e, value) => handleGetClassOptions(value)}
-                onChange={(e, value) => {
-                  formik.setFieldValue('classes', [
-                    value,
-                    ...formik.values.classes.filter(
-                      (item) => item?.id != value?.id,
-                    ),
-                  ])
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Nhập lớp để thêm"
-                    value=""
-                  />
-                )}
-              />
-              <div className="mt-4">
-                {formik.values.classes?.map((item, i) => (
-                  <div key={i}>{item?.name}</div>
-                ))}
-              </div>
-            </div>
-          )}
-          {!formik.values.public && (
-            <div className="py-3">
-              <h3 className="font-medium">
-                Sinh viên được phép tham gia khảo sát
-              </h3>
-              <Autocomplete
-                options={students}
-                getOptionLabel={(option) => option?.name}
-                isOptionEqualToValue={(o, v) => o?.id === v?.id}
-                size="small"
-                value={null}
-                className="mt-2"
-                onInputChange={async (e, value) =>
-                  handleGetStudentOptions(value)
-                }
-                onChange={(e, value) => {
-                  formik.setFieldValue('students', [
-                    value,
-                    ...formik.values.students.filter(
-                      (item) => item?.id != value?.id,
-                    ),
-                  ])
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="Nhập sinh viên để thêm"
-                    value=""
-                  />
-                )}
-              />
-              <div className="mt-4">
-                {formik.values.students?.map((item, i) => (
-                  <div key={i}>{item?.name}</div>
-                ))}
-              </div>
-            </div>
-          )}
-        </DialogContent>
+        {isLoading ? (
+          <div className="space-y-2 px-[16px]">
+            {[...new Array(5)].map((item, i) => (
+              <Skeleton height={30} key={i} />
+            ))}
+          </div>
+        ) : (
+          content
+        )}
         <DialogActions>
           <Button onClick={onClose}>Hủy</Button>
           <Button
             type="submit"
             variant="contained"
-            disabled={isLoading}
+            disabled={isSubmitLoading}
             startIcon={<AiOutlineEdit />}
           >
             Sửa cài đặt

@@ -63,6 +63,11 @@ const SurveyDashboardPage = () => {
       selector: (row) => row.questions?.length || 0,
     },
     {
+      name: 'Lượt tham gia',
+      selector: (row) =>
+        row?.user_surveys?.filter((item) => item?.is_finish)?.length || 0,
+    },
+    {
       name: 'Hành động',
       selector: (row) => (
         <>
