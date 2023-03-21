@@ -270,7 +270,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 <Grid item xs={12}>
                   <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <FormControlLabel
-                      checked={formik.values.questions[i]?.required}
+                      checked={!!formik.values.questions[i]?.required}
                       onChange={(e, checked) =>
                         formik.setFieldValue(
                           `questions[${i}].required`,

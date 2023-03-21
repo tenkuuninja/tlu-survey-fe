@@ -1,103 +1,33 @@
-import { MenuItem, Paper } from '@mui/material'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormGroup from '@mui/material/FormGroup'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
 import SurveyApi from 'common/apis/survey'
+import SurveyResult from 'common/components/SurveyResult'
 import useAuth from 'common/hooks/useAuth'
-import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
+import SurveyForm from './SurveyForm'
 
 const SurveyPage = () => {
   const [isLoading, setLoading] = useState(true)
   const [isSubmited, setSubmited] = useState(false)
-  const [survey, setSurvey] = useState<any>()
+  const [survey, setSurvey] = useState<any>(null)
+  const [answers, setAnswers] = useState<any[]>([])
   const params: any = useParams()
   const { user, role } = useAuth()
 
   const id = +params?.slug
 
-  const formik = useFormik({
-    initialValues: {} as any,
-    validateOnChange: false,
-    validateOnBlur: false,
-    async onSubmit(values) {
-      setSubmited(true)
-      try {
-        const requiredQuestionIds = survey?.questions
-          ?.filter((item) => item?.required)
-          ?.map((item) => item?.id)
-        const answers: any[] = []
-        for (const ansInfo of values) {
-          if (!!ansInfo.answer_text) {
-            delete ansInfo.option_ids
-            answers.push(ansInfo)
-          }
-          if (ansInfo.option_id !== null) {
-            delete ansInfo.option_ids
-            answers.push(ansInfo)
-          }
-          if (Array.isArray(ansInfo.option_ids)) {
-            answers.push(
-              ...ansInfo.option_ids?.map((qid) => ({
-                ...ansInfo,
-                option_id: qid,
-                option_ids: undefined,
-              })),
-            )
-          }
-        }
-        for (const qid of requiredQuestionIds) {
-          if (
-            !answers?.find(
-              (item) =>
-                (item?.option_id || item?.answer_text) &&
-                item?.question_id === qid,
-            )
-          ) {
-            setSubmited(false)
-            return toast.warning('Các trường có dấu * không được để trống')
-          }
-        }
-        console.log('form', values, answers, requiredQuestionIds)
-        await SurveyApi.submitFormSurvey({
-          answers,
-          section: {
-            user_id: user.id,
-            survey_id: id,
-          },
-        })
-        toast.success('Gửi thành công')
-      } catch (error) {
-        toast.error('Đã có lỗi xảy ra')
-        setSubmited(false)
-      }
-    },
-  })
+  console.log('survey', survey)
 
   useEffect(() => {
     const handleGetSurvey = async () => {
       setLoading(true)
       const resSurvey = await SurveyApi.getById(id)
       setSurvey(resSurvey?.data)
-      formik.setValues(
-        resSurvey?.data?.questions?.map((item) => ({
-          user_id: user.id,
-          survey_id: resSurvey?.data?.id,
-          question_id: item?.id || null,
-          option_id: null,
-          option_ids: [],
-          answer_text: null,
-        })),
-      )
-      // const resAnswer = await SurveyApi.getById(id)
+
+      const resAnswer = await SurveyApi.getAnswer(resSurvey?.data?.id, user.id)
+      setAnswers(resAnswer?.data)
+      if (resAnswer?.data?.length > 0) {
+        setSubmited(true)
+      }
       setLoading(false)
     }
     if (!Number.isNaN(id)) {
@@ -113,102 +43,21 @@ const SurveyPage = () => {
     return <></>
   }
 
+  if (isSubmited) {
+    return <SurveyResult survey={survey} answers={answers} />
+  }
+
   return (
-    <form className="mx-auto max-w-[576px] py-4" onSubmit={formik.handleSubmit}>
-      <Paper sx={{ p: 2 }}>
-        <h1 className="text-[28px]">{survey?.title}</h1>
-        <p className="text-sm text-red-500">* Bắt buộc</p>
-      </Paper>
-      {survey?.questions.map((question, i) => (
-        <Paper className="" sx={{ p: 2, mt: 2 }} key={i}>
-          <h3>
-            {question?.title}{' '}
-            {question?.required ? (
-              <span className="text-red-500">*</span>
-            ) : null}
-          </h3>
-          {question?.type_id === 1 && (
-            <div>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="female"
-                name={`[${i}].option_id`}
-                onChange={formik.handleChange}
-              >
-                {question?.options?.map((option, j) => (
-                  <FormControlLabel
-                    value={option.id}
-                    control={<Radio />}
-                    label={option?.title}
-                    checked={+formik.values?.[i]?.option_id === option?.id}
-                    key={j}
-                  />
-                ))}
-              </RadioGroup>
-            </div>
-          )}
-          {question?.type_id === 2 && (
-            <div>
-              <FormGroup>
-                {question?.options?.map((option, j) => (
-                  <FormControlLabel
-                    label={option?.title}
-                    control={<Checkbox />}
-                    checked={
-                      !!formik.values?.[i]?.option_ids?.includes(option?.id)
-                    }
-                    onChange={(e, checked) => {
-                      const newValue = formik.values?.[i]?.option_ids?.filter?.(
-                        (item) => item !== option?.id,
-                      )
-                      if (checked) {
-                        newValue.push(option?.id)
-                      }
-                      formik.setFieldValue(`[${i}].option_ids`, newValue)
-                    }}
-                    key={j}
-                  />
-                ))}
-              </FormGroup>
-            </div>
-          )}
-          {question?.type_id === 3 && (
-            <div>
-              <Select
-                size="small"
-                name={`[${i}].option_id`}
-                onChange={formik.handleChange}
-                sx={{ width: 300, mt: 2 }}
-              >
-                {question?.options?.map((option, j) => (
-                  <MenuItem value={option.id} key={j}>
-                    {option?.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </div>
-          )}
-          {question?.type_id === 4 && (
-            <div>
-              <TextField
-                size="small"
-                multiline
-                minRows={4}
-                fullWidth
-                name={`[${i}].answer_text`}
-                onChange={formik.handleChange}
-                sx={{ mt: 2 }}
-              />
-            </div>
-          )}
-        </Paper>
-      ))}
-      <Box sx={{ mt: 2 }}>
-        <Button disabled={isSubmited} type="submit" variant="contained">
-          Gửi
-        </Button>
-      </Box>
-    </form>
+    <SurveyForm
+      survey={survey}
+      onSuccess={async () => {
+        const resAnswer = await SurveyApi.getAnswer(id, user.id)
+        setAnswers(resAnswer?.data)
+        if (resAnswer?.data?.length > 0) {
+          setSubmited(true)
+        }
+      }}
+    />
   )
 }
 

@@ -25,6 +25,22 @@ const SurveyApi = {
     const res = await axios.post('/api/survey/submit-form', body)
     return res.data
   },
+  getAnswer: async (surveyId, userId) => {
+    const res = await axios.get(`/api/survey/${surveyId}/answer/${userId}`)
+    return res.data
+  },
+  getAnswerBySurveyId: async (surveyId) => {
+    const res = await axios.get(`/api/survey/${surveyId}/answer`)
+    return res.data
+  },
+  getSurveyOption: async (surveyId) => {
+    const res = await axios.get(`/api/survey/${surveyId}/option`)
+    return res.data
+  },
+  updateSurveyOption: async (surveyId, body) => {
+    const res = await axios.put(`/api/survey/${surveyId}/option`, body)
+    return res.data
+  },
 }
 
 export default SurveyApi

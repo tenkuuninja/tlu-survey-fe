@@ -11,34 +11,56 @@ import TextField from '@mui/material/TextField'
 import SurveyApi from 'common/apis/survey'
 import useAuth from 'common/hooks/useAuth'
 import { useFormik } from 'formik'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 interface SurveyResult {
   survey: any
+  answers: any[]
+  hideAlert?: boolean
+  hideHeader?: boolean
 }
 
-export default function SurveyResult({ survey }: SurveyResult) {
+export default function SurveyResult({
+  survey,
+  answers,
+  hideAlert = false,
+  hideHeader = false,
+}: SurveyResult) {
   const [isLoading, setLoading] = useState(true)
-  const [answer, setAnswer] = useState([])
   const params: any = useParams()
   const { user, role } = useAuth()
 
+  const answerObj = useMemo(
+    () =>
+      answers.reduce((acc, cur) => {
+        if (!acc[cur.question_id]) {
+          acc[cur.question_id] = []
+        }
+        acc[cur.question_id].push(cur)
+        return acc
+      }, {}),
+    [answers],
+  )
+
+  console.log('answerObj', { answerObj, survey })
+
   return (
     <form className="mx-auto max-w-[576px] py-4">
-      <Paper sx={{ p: 2 }}>
-        <h1 className="text-[28px]">{survey?.title}</h1>
-        <p className="text-sm text-red-500">* Bắt buộc</p>
-      </Paper>
+      {!hideHeader && (
+        <Paper sx={{ p: 2 }}>
+          <h1 className="text-[28px]">{survey?.title}</h1>
+          {!hideAlert && (
+            <p className="mt-4 rounded-md border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-600">
+              Câu trả lời của bạn đã được ghi lại.
+            </p>
+          )}
+        </Paper>
+      )}
       {survey?.questions.map((question, i) => (
         <Paper className="" sx={{ p: 2, mt: 2 }} key={i}>
-          <h3>
-            {question?.title}{' '}
-            {question?.required ? (
-              <span className="text-red-500">*</span>
-            ) : null}
-          </h3>
+          <h3>{question?.title} </h3>
           {question?.type_id === 1 && (
             <div>
               <RadioGroup
@@ -51,7 +73,11 @@ export default function SurveyResult({ survey }: SurveyResult) {
                     value={option.id}
                     control={<Radio />}
                     label={option?.title}
-                    checked={false}
+                    checked={
+                      !!answerObj?.[question?.id]?.find(
+                        (item) => item.option_id === option.id,
+                      )
+                    }
                     key={j}
                   />
                 ))}
@@ -65,7 +91,11 @@ export default function SurveyResult({ survey }: SurveyResult) {
                   <FormControlLabel
                     label={option?.title}
                     control={<Checkbox />}
-                    checked={false}
+                    checked={
+                      !!answerObj?.[question?.id]?.find(
+                        (item) => item.option_id === option.id,
+                      )
+                    }
                     key={j}
                   />
                 ))}
@@ -78,9 +108,10 @@ export default function SurveyResult({ survey }: SurveyResult) {
                 size="small"
                 name={`[${i}].option_id`}
                 sx={{ width: 300, mt: 2 }}
+                value={+answerObj?.[question?.id]?.[0]?.option_id}
               >
                 {question?.options?.map((option, j) => (
-                  <MenuItem value={option.id} key={j}>
+                  <MenuItem value={+option.id} key={j}>
                     {option?.title}
                   </MenuItem>
                 ))}
@@ -94,6 +125,7 @@ export default function SurveyResult({ survey }: SurveyResult) {
                 multiline
                 minRows={4}
                 fullWidth
+                value={answerObj?.[question?.id]?.[0]?.answer_text}
                 name={`[${i}].answer_text`}
                 sx={{ mt: 2 }}
               />
