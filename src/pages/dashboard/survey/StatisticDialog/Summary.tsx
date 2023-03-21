@@ -14,21 +14,27 @@ import { useFormik } from 'formik'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+import { Doughnut } from 'react-chartjs-2'
 
-interface SurveyResult {
+ChartJS.register(ArcElement, Tooltip, Legend)
+
+interface Summary {
   survey: any
   answers: any[]
   hideAlert?: boolean
 }
 
-export default function SurveyResult({
+export default function Summary({
   survey,
   answers,
   hideAlert = false,
-}: SurveyResult) {
+}: Summary) {
   const [isLoading, setLoading] = useState(true)
   const params: any = useParams()
   const { user, role } = useAuth()
+
+  console.log('stat', survey, answers)
 
   const answerObj = useMemo(
     () =>

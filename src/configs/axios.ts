@@ -8,7 +8,6 @@ const customAxios = axios.create({
 customAxios.interceptors.request.use(
   async (config: any) => {
     const token = localStorage.getItem('tlu:token')
-    console.log(token)
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token
     }

@@ -16,10 +16,14 @@ import {
   AiOutlinePlus,
   AiOutlineSearch,
   AiFillCaretRight,
+  AiOutlineBarChart,
+  AiOutlineSetting,
 } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import DeleteDialog from './DeleteDialog'
 import EditDialog from './EditDialog'
+import SettingDialog from './SettingDialog'
+import StatisticDialog from './StatisticDialog'
 
 const SurveyDashboardPage = () => {
   const [isLoading, setLoading] = useState(false)
@@ -27,6 +31,8 @@ const SurveyDashboardPage = () => {
   const [surveys, setSurveys] = useState<any[]>([])
   const [itemToUpdate, setItemToUpdate] = useState<any>(null)
   const [itemToDelete, setItemToDelete] = useState<any>(null)
+  const [itemToStatistic, setItemToStatistic] = useState<any>(null)
+  const [itemToSetting, setItemToSetting] = useState<any>(null)
 
   const handleFetchItem = async () => {
     setLoading(true)
@@ -67,6 +73,24 @@ const SurveyDashboardPage = () => {
               </IconButton>
             </Tooltip>
           </Link>
+          <Tooltip arrow title="Thống kê" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setItemToStatistic(row)}
+            >
+              <AiOutlineBarChart />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow title="Cài đặt" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setItemToSetting(row)}
+            >
+              <AiOutlineSetting />
+            </IconButton>
+          </Tooltip>
           <Tooltip arrow title="Sửa" placement="top">
             <IconButton
               size="small"
@@ -146,6 +170,18 @@ const SurveyDashboardPage = () => {
         onClose={() => setItemToDelete(null)}
         data={itemToDelete}
         onSuccess={handleFetchItem}
+      />
+      <StatisticDialog
+        open={!!itemToStatistic}
+        onClose={() => setItemToStatistic(null)}
+        data={itemToStatistic}
+        onSuccess={setItemToStatistic}
+      />
+      <SettingDialog
+        open={!!itemToSetting}
+        onClose={() => setItemToSetting(null)}
+        data={itemToSetting}
+        onSuccess={setItemToSetting}
       />
     </div>
   )

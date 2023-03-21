@@ -15,17 +15,17 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
-interface SurveyResult {
+interface QUestionDetail {
   survey: any
   answers: any[]
   hideAlert?: boolean
 }
 
-export default function SurveyResult({
+export default function QUestionDetail({
   survey,
   answers,
   hideAlert = false,
-}: SurveyResult) {
+}: QUestionDetail) {
   const [isLoading, setLoading] = useState(true)
   const params: any = useParams()
   const { user, role } = useAuth()
