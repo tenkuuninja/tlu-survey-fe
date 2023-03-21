@@ -21,6 +21,19 @@ const ClassApi = {
     const res = await axios.delete('/api/class/' + id)
     return res.data
   },
+  getListStudent: async (id) => {
+    const res = await axios.get('/api/class/'+ id +'/student')
+    return res.data
+  },
+  addStudentToClass: async (idclass, idstudent) => {
+    const res = await axios.post('/api/class/'+ idclass +'/student/' + idstudent)
+    return res.data
+  },
+  deleteStudentToClass: async (idclass, idstudent) => {
+    const res = await axios.delete('/api/class/' + idclass + '/student/' + idstudent)
+    return res.data
+  },
+
 }
 
 export default ClassApi

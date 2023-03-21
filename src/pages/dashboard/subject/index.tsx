@@ -4,38 +4,57 @@ import {
   Skeleton,
   TextField,
   InputAdornment,
-  Tooltip, } from '@mui/material'
-import SurveyApi from 'common/apis/subject'
+  Tooltip,
+  Select,
+  MenuItem, 
+} from '@mui/material'
+import SubjectApi from 'common/apis/subject'
+import DepartmentApi from 'common/apis/department'
+import useAuth from 'common/hooks/useAuth'
 import { useEffect, useState } from 'react'
-import DataTable from 'react-data-table-component'
+import DataTable, {TableColumn} from 'react-data-table-component'
 import {
   AiOutlineDelete,
   AiOutlineEdit,
   AiOutlinePlus,
   AiOutlineSearch,
 } from 'react-icons/ai'
-import { Link } from 'react-router-dom'
 import EditDialog from './EditDialog'
+import DeleteDialog from './DeleteDialog'
  
 const SubjectDashboardPage = () => {
+  const { role } = useAuth()
   const [isLoading, setLoading] = useState(false)
   const [filter, setFilter] = useState<any>({})
   const [subjects, setSubjects] = useState<any[]>([])
+  const [departments, setDepartments] = useState<any[]>([])
   const [subjectToUpdate, setSubjectToUpdate] = useState<any>(null)
   const [subjectToDelete, setSubjectToDelete] = useState<any>(null)
 
   const handleFetchSubject = async() => {
     setLoading(true)
-    const res = await SurveyApi.getAll(filter)
+    const params = { ...filter }
+    if (+params.department === 0) {
+      delete params.department
+    }
+    const res = await SubjectApi.getAll(params)
     setSubjects(res.data)
     setLoading(false)
   }
 
   useEffect(() => {
     handleFetchSubject()
+  }, [filter])
+
+  useEffect(() => {
+    const handleFetchDepartment = async () => {
+      const res = await DepartmentApi.getAll()
+      setDepartments(res.data)
+    }
+    handleFetchDepartment()
   }, [])
 
-  const columns = [
+  const columns: TableColumn<any>[] = [
     {
       name: 'Mã môn',
       selector: (row) => row.code,
@@ -46,7 +65,7 @@ const SubjectDashboardPage = () => {
     },
     {
       name: 'Thuộc Khoa',
-      selector: (row) => row.department_id,
+      selector: (row) => row.department?.code,
     },
     {
       name: 'Số tín chỉ',
@@ -83,11 +102,30 @@ const SubjectDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Môn học</h2>
-        <Button onClick={() => setSubjectToUpdate({})}>
-          <AiOutlinePlus /> Thêm
-        </Button>
+        {role === 'admin' && (
+          <Button onClick={() => setSubjectToUpdate({})}>
+            <AiOutlinePlus /> Thêm
+          </Button>
+        )}
         </div>
-        <div className="mt-4 flex items-center justify-end">   
+        {role === 'admin' && (
+        <div className="mt-4 flex items-center justify-end gap-4">
+        <Select
+            size="small"
+            value={filter.department}
+            onChange={(e) =>
+              setFilter({ ...filter, department: e.target.value })
+            }
+            fullWidth
+            sx={{ maxWidth: 300 }}
+          >
+            <MenuItem value="0">-- Tất cả khoa --</MenuItem>
+            {departments?.map((item, i) => (
+              <MenuItem value={item?.id} key={i}>
+                {item?.name}
+              </MenuItem>
+            ))}
+          </Select>   
         <TextField
           size="small"
           value={filter?.search || ''}
@@ -108,9 +146,9 @@ const SubjectDashboardPage = () => {
           }}
         />
       </div> 
-        
+        )}
       
-      <div>
+      <div className="mt-10">
       {isLoading && (
           <>
             {[...new Array(10)].map((item, i) => (
@@ -123,12 +161,18 @@ const SubjectDashboardPage = () => {
             ))}
           </>
         )}
-        {!isLoading && <DataTable data={subjects} columns={columns} />}
+        {!isLoading && <DataTable dense data={subjects} columns={columns} />}
       </div>
       <EditDialog
         open={!!subjectToUpdate}
         onClose={() => setSubjectToUpdate(null)}
         data={subjectToUpdate}
+        onSuccess={handleFetchSubject}
+      />
+      <DeleteDialog
+        open={!!subjectToDelete}
+        onClose={() => setSubjectToDelete(null)}
+        data={subjectToDelete}
         onSuccess={handleFetchSubject}
       />
     </div>

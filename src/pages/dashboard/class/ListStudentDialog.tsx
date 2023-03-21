@@ -4,63 +4,42 @@ import {
   DialogTitle,
   DialogContent,
   IconButton,
-  DialogContentText,
-  DialogActions,
+  Tooltip,
+  Skeleton,
 } from '@mui/material'
+import ClassApi from 'common/apis/class'
+import useAuth from 'common/hooks/useAuth'
 import { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
-import DataTable from 'react-data-table-component'
+import DataTable, {TableColumn} from 'react-data-table-component'
 import {
   AiOutlineDelete,
-  AiOutlineEdit,
-  AiOutlineFileAdd,
   AiOutlinePlus,
 } from 'react-icons/ai'
-import * as yup from 'yup'
+import DeleteStudentDialog from './DeleteStudentDialog'
+import AddStudentDialog from './AddStudentDialog'
 
-const validationSchema = yup.object({})
-const fakesgv = [...new Array(10)].map((item, i) => ({
-  id: i + 1,
-  name: 'long' + i,
-  sex: 'male',
-  department: 'CNTT',
-}))
 
-const initialValues = {
-  id: '',
-  name: '',
-  sex: '',
-  department: '',
-}
+const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
+  const { role } = useAuth()
+  const [isLoading, setLoading] = useState(false)
+  const [listStudents, setlistStudents] = useState<any[]>([])
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
+  const [itemToUpdate, setItemToUpdate] = useState<any>(null)
 
-const listStudentDialog = ({ open, onclose, data, onSuccess }) => {
-  const [classes, setClasses] = useState<any[]>([])
-  const [classDeleteID, setClassDeleteID] = useState<any>(null)
-  const [isOpenConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false)
 
-  const handleFetchClass = () => {
-    setClasses(fakesgv)
+  const handleFetchListStudent = async () => {
+    setLoading(true)
+    const res = await ClassApi.getListStudent(1)
+    setlistStudents(res.data)
+    setLoading(false)
   }
+
   useEffect(() => {
-    handleFetchClass()
+    handleFetchListStudent()
   }, [])
-  const handleClose = () => {
-    setOpenConfirmDeleteModal(false)
-  }
 
-  const handleClickDelete = (id) => {
-    setClassDeleteID(id)
-    setOpenConfirmDeleteModal(true)
-  }
-
-  const handleDeleteClass = () => {
-    setClasses((pre) => {
-      const newArray = [...pre]
-      return newArray.filter((classes) => classes.id !== classDeleteID)
-    })
-    setOpenConfirmDeleteModal(false)
-  }
-  const columns = [
+  const columns: TableColumn<any>[] = [
     {
       name: 'Mã sinh viên',
       selector: (row) => row.id,
@@ -81,69 +60,66 @@ const listStudentDialog = ({ open, onclose, data, onSuccess }) => {
       name: 'Hành động',
       selector: (row) => (
         <>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => handleClickDelete(row.id)}
-          >
-            <AiOutlineDelete />
-          </IconButton>
+          <Tooltip arrow title="Xoá" placement="top">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => setItemToDelete({class_id:data.id, student_id:row.id})}
+            >
+              <AiOutlineDelete />
+            </IconButton>
+          </Tooltip>
         </>
       ),
     },
   ]
 
-  const isUpdate = !!data
-  const formik = useFormik({
-    initialValues,
-    validationSchema,
-    validateOnChange: false,
-    validateOnBlur: false,
-    onSubmit(values) {
-      console.log('create user with', values)
-      onSuccess && onSuccess()
-    },
-  })
   return (
     <Dialog open={open} onClose={onclose} maxWidth="lg" fullWidth>
       <DialogTitle>
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold">Danh sách sinh viên</h2>
-          <Button>
+          {role === 'admin' && (
+          <Button onClick={() => setItemToUpdate({class_id:data.id})}>
             <AiOutlinePlus /> Thêm
           </Button>
+        )}
         </div>
       </DialogTitle>
       <DialogContent>
-        <div>
-          <DataTable data={classes} columns={columns} />
-          <Dialog
-            open={isOpenConfirmDeleteModal}
-            onClose={handleClose}
-            maxWidth="xs"
-            fullWidth
-          >
-            <DialogTitle>Xác nhận xóa lớp học</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                Bạn có chắc muốn xóa sinh viên này khỏi lớp học này không??
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Hủy</Button>
-              <Button
-                variant="contained"
-                color="error"
-                onClick={handleDeleteClass}
-                startIcon={<AiOutlineDelete />}
-              >
-                Xóa
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
+      <div className="mt-10">
+        {isLoading && (
+          <>
+            {[...new Array(10)].map((item, i) => (
+              <Skeleton
+                variant="rectangular"
+                height={32}
+                sx={{ mt: 2 }}
+                key={i}
+              />
+            ))}
+          </>
+        )}
+        {!isLoading && <DataTable data={listStudents} columns={columns} />}
+      </div>
       </DialogContent>
+
+      <AddStudentDialog
+        open={!!itemToUpdate}
+        onClose={() => setItemToUpdate(null)}
+        data={itemToUpdate}
+        onSuccess={handleFetchListStudent}
+      />
+
+      <DeleteStudentDialog
+        open={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        data={itemToDelete}
+        onSuccess={handleFetchListStudent}
+    />
     </Dialog>
+
+    
   )
 }
-export default listStudentDialog
+export default ListStudentDialog
