@@ -1,3 +1,4 @@
+import { Paper } from '@mui/material'
 import SurveyApi from 'common/apis/survey'
 import SurveyResult from 'common/components/SurveyResult'
 import useAuth from 'common/hooks/useAuth'
@@ -8,12 +9,13 @@ import SurveyForm from './SurveyForm'
 const SurveyPage = () => {
   const [isLoading, setLoading] = useState(true)
   const [isSubmited, setSubmited] = useState(false)
+  const [isSended, setSended] = useState(false)
   const [survey, setSurvey] = useState<any>(null)
   const [answers, setAnswers] = useState<any[]>([])
   const params: any = useParams()
   const { user, role } = useAuth()
 
-  const id = +params?.slug
+  const id = +params?.slug.replace(/\D.*$/g, '')
 
   console.log('survey', survey)
 
@@ -43,8 +45,28 @@ const SurveyPage = () => {
     return <></>
   }
 
-  if (isSubmited) {
-    return <SurveyResult survey={survey} answers={answers} />
+  if (isSubmited && !!survey?.option?.limit) {
+    return (
+      <SurveyResult
+        survey={survey}
+        answers={answers}
+        messageType="error"
+        message="Khảo sát này chỉ được thực hiện 1 lần. Bạn đã tham gia khảo sát này"
+        hideResult={!survey?.option?.view_results}
+      />
+    )
+  }
+
+  if (isSended) {
+    return (
+      <SurveyResult
+        survey={survey}
+        answers={answers}
+        messageType="success"
+        message="Câu trả lời của bạn đã được ghi lại"
+        hideResult={!survey?.option?.view_results}
+      />
+    )
   }
 
   return (
@@ -54,7 +76,7 @@ const SurveyPage = () => {
         const resAnswer = await SurveyApi.getAnswer(id, user.id)
         setAnswers(resAnswer?.data)
         if (resAnswer?.data?.length > 0) {
-          setSubmited(true)
+          setSended(true)
         }
       }}
     />

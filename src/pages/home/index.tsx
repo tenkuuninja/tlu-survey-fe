@@ -8,10 +8,10 @@ const HomePage = () => {
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
-      navigate('/login')
+      navigate('/dang-nhap')
     }
     if (!isAuthenticating && isAuthenticated) {
-      navigate('/dashboard')
+      navigate('/bang-dieu-khien')
     }
   }, [isAuthenticated])
 

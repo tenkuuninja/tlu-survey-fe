@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import SurveyApi from 'common/apis/survey'
+import { toSlug } from 'common/helpers/string'
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import {
@@ -74,7 +75,10 @@ const SurveyDashboardPage = () => {
       name: 'Hành động',
       selector: (row) => (
         <>
-          <Link to={`/survey/${row?.id}`} target="_blank">
+          <Link
+            to={`/khao-sat/${row?.id}-${toSlug(row?.title)}`}
+            target="_blank"
+          >
             <Tooltip arrow title="Khảo sát" placement="top">
               <IconButton size="small" color="info">
                 <AiFillCaretRight />

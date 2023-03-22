@@ -1,3 +1,8 @@
+import { Dialog } from '@mui/material'
+import { DialogContent } from '@mui/material'
+import { DialogTitle } from '@mui/material'
+import { DialogContentText } from '@mui/material'
+import { DialogActions } from '@mui/material'
 import { MenuItem, Paper } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -16,6 +21,7 @@ import { toast } from 'react-toastify'
 
 const SurveyForm = ({ survey, onSuccess }) => {
   const [isLoadingSubmmit, setLoadingSubmit] = useState(false)
+  const [isOpenConfirmDialog, setOpenConfirmDialog] = useState(false)
   const { user } = useAuth()
 
   const formik = useFormik({
@@ -24,42 +30,42 @@ const SurveyForm = ({ survey, onSuccess }) => {
     validateOnBlur: false,
     async onSubmit(values) {
       setLoadingSubmit(true)
+      const requiredQuestionIds = survey?.questions
+        ?.filter((item) => item?.required)
+        ?.map((item) => item?.id)
+      const answers: any[] = []
+      for (const ansInfo of values) {
+        if (!!ansInfo.answer_text) {
+          delete ansInfo.option_ids
+          answers.push(ansInfo)
+        }
+        if (ansInfo.option_id !== null) {
+          delete ansInfo.option_ids
+          answers.push(ansInfo)
+        }
+        if (Array.isArray(ansInfo.option_ids)) {
+          answers.push(
+            ...ansInfo.option_ids?.map((qid) => ({
+              ...ansInfo,
+              option_id: qid,
+              option_ids: undefined,
+            })),
+          )
+        }
+      }
+      for (const qid of requiredQuestionIds) {
+        if (
+          !answers?.find(
+            (item) =>
+              (item?.option_id || item?.answer_text) &&
+              item?.question_id === qid,
+          )
+        ) {
+          setLoadingSubmit(false)
+          return toast.warning('Các trường có dấu * không được để trống')
+        }
+      }
       try {
-        const requiredQuestionIds = survey?.questions
-          ?.filter((item) => item?.required)
-          ?.map((item) => item?.id)
-        const answers: any[] = []
-        for (const ansInfo of values) {
-          if (!!ansInfo.answer_text) {
-            delete ansInfo.option_ids
-            answers.push(ansInfo)
-          }
-          if (ansInfo.option_id !== null) {
-            delete ansInfo.option_ids
-            answers.push(ansInfo)
-          }
-          if (Array.isArray(ansInfo.option_ids)) {
-            answers.push(
-              ...ansInfo.option_ids?.map((qid) => ({
-                ...ansInfo,
-                option_id: qid,
-                option_ids: undefined,
-              })),
-            )
-          }
-        }
-        for (const qid of requiredQuestionIds) {
-          if (
-            !answers?.find(
-              (item) =>
-                (item?.option_id || item?.answer_text) &&
-                item?.question_id === qid,
-            )
-          ) {
-            setLoadingSubmit(false)
-            return toast.warning('Các trường có dấu * không được để trống')
-          }
-        }
         console.log('form', values, answers, requiredQuestionIds)
         await SurveyApi.submitFormSurvey({
           answers,
@@ -99,7 +105,7 @@ const SurveyForm = ({ survey, onSuccess }) => {
   }
 
   return (
-    <form className="mx-auto max-w-[576px] py-4" onSubmit={formik.handleSubmit}>
+    <div className="mx-auto max-w-[576px] py-4">
       <Paper sx={{ p: 2 }}>
         <h1 className="text-[28px]">{survey?.title}</h1>
         <p className="text-sm text-red-500">* Bắt buộc</p>
@@ -189,11 +195,40 @@ const SurveyForm = ({ survey, onSuccess }) => {
         </Paper>
       ))}
       <Box sx={{ mt: 2 }}>
-        <Button disabled={isLoadingSubmmit} type="submit" variant="contained">
+        <Button
+          disabled={isLoadingSubmmit}
+          type="submit"
+          variant="contained"
+          onClick={() => setOpenConfirmDialog(true)}
+        >
           Gửi
         </Button>
       </Box>
-    </form>
+      <Dialog
+        open={!!isOpenConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>Xác nhận gửi biểu mẫu</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Bạn có chắc muốn gửi biểu mẫu khảo sát này không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirmDialog(false)}>Hủy</Button>
+          <Button
+            variant="contained"
+            color="error"
+            disabled={isLoadingSubmmit}
+            onClick={() => formik.handleSubmit()}
+          >
+            Đồng ý
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   )
 }
 

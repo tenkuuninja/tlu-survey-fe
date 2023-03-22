@@ -12,7 +12,7 @@ export default function AuthProvider({ children }: any) {
 
   useEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
-      navigate('/login')
+      navigate('/dang-nhap')
     }
   }, [isAuthenticated])
 

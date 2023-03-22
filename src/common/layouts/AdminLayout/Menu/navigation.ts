@@ -15,7 +15,7 @@ export default [
     children: [
       {
         label: 'Bảng điều khiển',
-        path: '/dashboard',
+        path: '/bang-dieu-khien',
         icon: AiOutlineDashboard,
         roles: ['admin', 'teacher', 'student'],
       },
@@ -26,31 +26,31 @@ export default [
     children: [
       {
         label: 'Khảo sát',
-        path: '/dashboard/survey',
+        path: '/bang-dieu-khien/khao-sat',
         icon: VscOpenPreview,
         roles: ['admin', 'teacher', 'student'],
       },
       {
         label: 'Giảng viên',
-        path: '/dashboard/lecturer',
+        path: '/bang-dieu-khien/giang-vien',
         icon: SlGraduation,
         roles: ['admin'],
       },
       {
         label: 'Sinh viên',
-        path: '/dashboard/student',
+        path: '/bang-dieu-khien/sinh-vien',
         icon: AiOutlineUser,
         roles: ['admin'],
       },
       {
         label: 'Môn học',
-        path: '/dashboard/subject',
+        path: '/bang-dieu-khien/mon-hoc',
         icon: AiOutlineBook,
         roles: ['admin'],
       },
       {
         label: 'Lớp học',
-        path: '/dashboard/class',
+        path: '/bang-dieu-khien/lop-hoc',
         icon: BsPeople,
         roles: ['admin', 'teacher', 'student'],
       },
@@ -61,7 +61,7 @@ export default [
     children: [
       {
         label: 'Đổi mật khẩu',
-        path: '/dashboard/change-password',
+        path: '/bang-dieu-khien/doi-mat-khau',
         icon: AiOutlineKey,
         roles: ['teacher', 'student'],
       },

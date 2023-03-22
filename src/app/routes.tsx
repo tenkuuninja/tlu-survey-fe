@@ -16,7 +16,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
-    // errorElement: <HomePage />,
+    errorElement: <HomePage />,
     children: [
       {
         path: '/',
@@ -24,45 +24,45 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: '/login',
+        path: '/dang-nhap',
         element: <LoginPage />,
       },
       {
-        path: '/survey/:slug',
+        path: '/khao-sat/:slug',
         element: <SurveyPage />,
       },
     ],
   },
   {
-    path: '/dashboard',
+    path: '/bang-dieu-khien',
     element: <AdminLayout />,
     children: [
       {
-        path: '/dashboard',
+        path: '/bang-dieu-khien',
         element: <DashboardPage />,
       },
       {
-        path: '/dashboard/survey',
+        path: '/bang-dieu-khien/khao-sat',
         element: <SurveyDashboardPage />,
       },
       {
-        path: '/dashboard/student',
+        path: '/bang-dieu-khien/sinh-vien',
         element: <StudentDashboardPage />,
       },
       {
-        path: '/dashboard/lecturer',
+        path: '/bang-dieu-khien/giang-vien',
         element: <LecturerDashboardPage />,
       },
       {
-        path: '/dashboard/class',
+        path: '/bang-dieu-khien/lop-hoc',
         element: <ClassDashboardPage />,
       },
       {
-        path: '/dashboard/subject',
+        path: '/bang-dieu-khien/mon-hoc',
         element: <SubjectDashboardPage />,
       },
       {
-        path: '/dashboard/change-password',
+        path: '/bang-dieu-khien/doi-mat-khau',
         element: <ChangePasswordDashboardPage />,
       },
     ],

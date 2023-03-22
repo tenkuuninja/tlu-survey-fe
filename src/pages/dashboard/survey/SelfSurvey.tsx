@@ -29,7 +29,7 @@ const SelfSurveyDialog = ({ open, onClose, data }) => {
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>Khảo sát của tôi</DialogTitle>
       <DialogContent>
-        <SurveyResult survey={data} answers={userAnswer} hideAlert />
+        <SurveyResult survey={data} answers={userAnswer} />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Đóng</Button>
