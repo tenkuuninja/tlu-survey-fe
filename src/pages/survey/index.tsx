@@ -12,6 +12,7 @@ const SurveyPage = () => {
   const [isLoading, setLoading] = useState(true)
   const [isSubmited, setSubmited] = useState(false)
   const [isSended, setSended] = useState(false)
+  const [isError, setError] = useState(false)
   const [survey, setSurvey] = useState<any>(null)
   const [answers, setAnswers] = useState<any[]>([])
   const params: any = useParams()
@@ -24,23 +25,27 @@ const SurveyPage = () => {
   useEffect(() => {
     const handleGetSurvey = async () => {
       setLoading(true)
-      const resSurvey = await SurveyApi.getById(id)
-      if (resSurvey?.data?.option?.shuffle_question_order) {
-        shuffleArray(resSurvey?.data?.questions)
-      }
-      setSurvey(resSurvey?.data)
+      try {
+        const resSurvey = await SurveyApi.getById(id)
+        if (resSurvey?.data?.option?.shuffle_question_order) {
+          shuffleArray(resSurvey?.data?.questions)
+        }
+        setSurvey(resSurvey?.data)
 
-      const resAnswer = await SurveyApi.getAnswer(resSurvey?.data?.id, user.id)
-      setAnswers(resAnswer?.data)
-      if (resAnswer?.data?.length > 0) {
-        setSubmited(true)
+        const resAnswer = await SurveyApi.getAnswer(id, user.id)
+        setAnswers(resAnswer?.data)
+        if (resAnswer?.data?.length > 0) {
+          setSubmited(true)
+        }
+      } catch (error) {
+        setError(true)
       }
       setLoading(false)
     }
     if (!Number.isNaN(id)) {
       handleGetSurvey()
     }
-  }, [])
+  }, [id])
 
   if (Number.isNaN(id)) {
     return <>404</>
@@ -55,6 +60,18 @@ const SurveyPage = () => {
         <Skeleton height={50} />
         <Skeleton height={50} />
       </Paper>
+    )
+  }
+
+  if (isError) {
+    return (
+      <SurveyResult
+        survey={survey}
+        answers={answers}
+        messageType="error"
+        message="Không tìm thấy khảo sát. Có thể liên kết bị sai hoặc bạn không có quyền thực hiện khảo sát này"
+        hideResult={true}
+      />
     )
   }
 

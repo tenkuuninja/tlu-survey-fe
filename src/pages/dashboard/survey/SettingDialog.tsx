@@ -1,3 +1,4 @@
+import { IconButton } from '@mui/material'
 import {
   Autocomplete,
   Button,
@@ -14,7 +15,7 @@ import StudentApi from 'common/apis/student'
 import SurveyApi from 'common/apis/survey'
 import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
-import { AiOutlineEdit } from 'react-icons/ai'
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { toast } from 'react-toastify'
 
 const options = [
@@ -168,7 +169,19 @@ const SettingDialog = ({ open, onClose, data, onSuccess }) => {
           />
           <div className="mt-4">
             {formik.values.classes?.map((item, i) => (
-              <div key={i}>{item?.name}</div>
+              <div className="flex justify-between" key={i}>
+                <p>{item?.name}</p>
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => {
+                    formik.values.classes.splice(i, 1)
+                    formik.setFieldValue('classes', formik.values.classes)
+                  }}
+                >
+                  <AiOutlineDelete />
+                </IconButton>
+              </div>
             ))}
           </div>
         </div>
@@ -202,7 +215,21 @@ const SettingDialog = ({ open, onClose, data, onSuccess }) => {
           />
           <div className="mt-4">
             {formik.values.students?.map((item, i) => (
-              <div key={i}>{item?.name}</div>
+              <div className="flex justify-between" key={i}>
+                <p>
+                  {item?.name} - {item?.department?.name}
+                </p>
+                <IconButton
+                  size="small"
+                  color="error"
+                  onClick={() => {
+                    formik.values.students.splice(i, 1)
+                    formik.setFieldValue('students', formik.values.students)
+                  }}
+                >
+                  <AiOutlineDelete />
+                </IconButton>
+              </div>
             ))}
           </div>
         </div>
