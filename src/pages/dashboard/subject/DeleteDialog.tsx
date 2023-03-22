@@ -16,11 +16,13 @@ const DeleteDialog = ({ open, onClose, data, onSuccess }) => {
 
   const handleDeleteById = async (id) => {
     setLoading(true)
-    await SubjectApi.deleteById(id)
+    try {
+      await SubjectApi.deleteById(id)
+      onSuccess && onSuccess()
+      onClose()
+      toast.success('Xoá môn học thành công')
+    } catch (error) {}
     setLoading(false)
-    onSuccess && onSuccess()
-    onClose()
-    toast.success('Xoá môn học thành công')
   }
 
   return (

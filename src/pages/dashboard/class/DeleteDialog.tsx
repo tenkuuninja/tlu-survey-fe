@@ -15,12 +15,14 @@ const DeleteDialog = ({ open, onClose, data, onSuccess }) => {
   const [isLoading, setLoading] = useState(false)
 
   const handleDeleteById = async (id) => {
-    setLoading(true)
-    await ClassApi.deleteById(id)
+    try {
+      setLoading(true)
+      await ClassApi.deleteById(id)
+      onSuccess && onSuccess()
+      onClose()
+      toast.success('Xoá lớp học thành công')
+    } catch (error) {}
     setLoading(false)
-    onSuccess && onSuccess()
-    onClose()
-    toast.success('Xoá lớp học thành công')
   }
 
   return (
