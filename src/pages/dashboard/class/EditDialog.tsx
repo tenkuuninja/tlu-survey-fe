@@ -17,6 +17,9 @@ import {
 } from '@mui/material'
 import DepartmentApi from 'common/apis/department'
 import ClassApi from 'common/apis/class'
+import SubjectApi from 'common/apis/subject'
+import TeacherApi from 'common/apis/teacher'
+import GradeApi from 'common/apis/grade'
 import { useFormik } from 'formik'
 import { useState, useEffect } from 'react'
 import { AiOutlinePlus, AiOutlineEdit } from 'react-icons/ai'
@@ -28,11 +31,14 @@ import * as yup from 'yup'
     name: '',
     subject_id:'',
     teacher_id: '',
+    grade_level_id:'',
     status:'',
   }
   const EditDialog = ({ open, onClose, data, onSuccess }) => {
     const [isLoading, setLoading] = useState(false)
-    const [departments, setDepartments] = useState<any[]>([])
+    const [subjects, setSubjects] = useState<any[]>([])
+    const [teachers, setTeachers] = useState<any[]>([])
+    const [grades, setGrades] = useState<any[]>([])
     const isUpdate = !!data?.id
   
     const validationSchema = yup.object({
@@ -75,11 +81,27 @@ import * as yup from 'yup'
     console.log(formik.values)
 
     useEffect(() => {
-      const handleFetchDepartments = async () => {
-        const res = await DepartmentApi.getAll()
-        setDepartments(res.data)
+      const handleFetchSubject = async () => {
+        const res = await SubjectApi.getAll()
+        setSubjects(res.data)
       }
-      handleFetchDepartments()
+      handleFetchSubject()
+    }, [])
+
+    useEffect(() => {
+      const handleFetchTeacher = async () => {
+        const res = await TeacherApi.getAll()
+        setTeachers(res.data)
+      }
+      handleFetchTeacher()
+    }, [])
+
+    useEffect(() => {
+      const handleFetchGrade = async () => {
+        const res = await GradeApi.getAll()
+        setGrades(res.data)
+      }
+      handleFetchGrade()
     }, [])
 
     useEffect(() => {
@@ -126,32 +148,71 @@ import * as yup from 'yup'
               <Grid item md={6}>
                 <FormControl fullWidth>
                   <FormLabel>Môn học</FormLabel>
-                  <TextField
-                    size="small"
-                    name="subject_id"
-                    value={formik.values.subject_id}
-                    onChange={formik.handleChange}
-                    error={!!formik.errors.subject_id}
-                    helperText={formik.errors.subject_id}
-                    placeholder="Nhập môn học"
-                    fullWidth
-                  />
+                  <Select
+                  size="small"
+                  name="subject_id"
+                  disabled={isUpdate}
+                  value={formik.values.subject_id}
+                  onChange={formik.handleChange}
+                >
+                  {subjects?.map((item, i) => (
+                    <MenuItem value={item?.id} key={i}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {!!formik.errors.subject_id && (
+                  <FormHelperText error={true}>
+                    {formik.errors.subject_id}
+                  </FormHelperText>
+                )}
                 </FormControl>
               </Grid>
   
               <Grid item md={6}>
                 <FormControl fullWidth>
                   <FormLabel>Giảng viên</FormLabel>
-                  <TextField
-                    size="small"
-                    name="teacher_id"
-                    value={formik.values.teacher_id}
-                    onChange={formik.handleChange}
-                    error={!!formik.errors.teacher_id}
-                    helperText={formik.errors.teacher_id}
-                    placeholder="Nhập giảng viên"
-                    fullWidth
-                  />
+                  <Select
+                  size="small"
+                  name="teacher_id"
+                  disabled={isUpdate}
+                  value={formik.values.teacher_id}
+                  onChange={formik.handleChange}
+                >
+                  {teachers?.map((item, i) => (
+                    <MenuItem value={item?.id} key={i}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {!!formik.errors.teacher_id && (
+                  <FormHelperText error={true}>
+                    {formik.errors.teacher_id}
+                  </FormHelperText>
+                )}
+                </FormControl>
+              </Grid>
+              <Grid item md={6}>
+                <FormControl fullWidth>
+                  <FormLabel>Thuộc khóa</FormLabel>
+                  <Select
+                  size="small"
+                  name="grade_level_id"
+                  disabled={isUpdate}
+                  value={formik.values.grade_level_id}
+                  onChange={formik.handleChange}
+                >
+                  {grades?.map((item, i) => (
+                    <MenuItem value={item?.id} key={i}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {!!formik.errors.grade_level_id && (
+                  <FormHelperText error={true}>
+                    {formik.errors.grade_level_id}
+                  </FormHelperText>
+                )}
                 </FormControl>
               </Grid>
               <Grid item md={6}>

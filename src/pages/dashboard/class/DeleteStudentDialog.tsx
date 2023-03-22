@@ -37,7 +37,7 @@ const DeleteStudentDialog = ({ open, onClose, data, onSuccess }) => {
           variant="contained"
           color="error"
           disabled={isLoading}
-          onClick={() => handleDeleteById(data?.classid,data?.studentid)}
+          onClick={() => handleDeleteById(data?.class_id,data?.student_id)}
           startIcon={<AiOutlineDelete />}
         >
           Xóa

@@ -16,6 +16,7 @@ import StudentApi from 'common/apis/student'
 import DepartmentApi from 'common/apis/department'
 import useAuth from 'common/hooks/useAuth'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import DataTable, { TableColumn } from 'react-data-table-component'
 import {
   AiOutlinePlus,
@@ -30,6 +31,7 @@ const AddStudentDialog = ({ open, onClose, data, onSuccess }) => {
   const [filter, setFilter] = useState<any>({ department: '0' })
   const [itemToUpdate, setItemToUpdate] = useState<any>(null)
   const [students, setStudents] = useState<any[]>([])
+  const [addstudents, setaddStudents] = useState<any[]>([])
 
   const handleFetchStudent = async () => {
     setLoading(true)
@@ -41,6 +43,13 @@ const AddStudentDialog = ({ open, onClose, data, onSuccess }) => {
     setStudents(res.data)
     setLoading(false)
   }
+
+  const handleAddClass = async(classid,studentid) => {
+      const res = await ClassApi.addStudentToClass(classid,studentid)
+      onSuccess && onSuccess()
+      onClose()
+      toast.success('Thêm sinh viên vào lớp thành công')
+    }
 
   useEffect(() => {
     handleFetchStudent()
@@ -83,7 +92,7 @@ const AddStudentDialog = ({ open, onClose, data, onSuccess }) => {
             <IconButton
               size="small"
               color="info"
-              onClick={() => setItemToUpdate({class_id:data.id, student_id:row.id})}
+              onClick={() => handleAddClass(data.class_id,row.id)}
             >
               <AiOutlinePlus />
             </IconButton>
