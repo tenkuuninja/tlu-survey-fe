@@ -80,12 +80,6 @@ const menu = [
     roles: ['student'],
   },
   {
-    label: 'Lớp học',
-    path: '/bang-dieu-khien/lop-hoc',
-    icon: BsPeople,
-    roles: ['student'],
-  },
-  {
     label: 'Đổi mật khẩu',
     path: '/bang-dieu-khien/doi-mat-khau',
     icon: AiOutlineKey,
