@@ -1,8 +1,18 @@
-import { Button, FormControl, MenuItem, Select, TextField } from '@mui/material'
+import {
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Select,
+  TextField,
+} from '@mui/material'
 import useAuth from 'common/hooks/useAuth'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { Helmet } from 'react-helmet'
+import { useState } from 'react'
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
 const validationSchema = yup.object({
   username: yup
@@ -23,6 +33,7 @@ const initialValues = {
 
 const LoginPage = () => {
   const { login } = useAuth()
+  const [iShowPassword, setShowPassword] = useState(false)
 
   const formik = useFormik({
     initialValues,
@@ -79,7 +90,7 @@ const LoginPage = () => {
             <TextField
               className="mt-2"
               size="small"
-              type="password"
+              type={iShowPassword ? 'text' : 'password'}
               name="password"
               value={formik.values.password}
               onChange={formik.handleChange}
@@ -87,6 +98,19 @@ const LoginPage = () => {
               helperText={formik.errors.password}
               placeholder="Nhập mật khẩu của bạn"
               fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!iShowPassword)}>
+                      {iShowPassword ? (
+                        <AiOutlineEyeInvisible />
+                      ) : (
+                        <AiOutlineEye />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </FormControl>
           <div className="mt-10 flex items-start space-x-4">

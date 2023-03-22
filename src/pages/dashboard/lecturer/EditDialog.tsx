@@ -244,7 +244,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 <TextField
                   size="small"
                   name="password"
-                  type="password"
+                  type={iShowPassword ? 'text' : 'password'}
                   autoComplete="new-password"
                   value={formik.values.password}
                   onChange={formik.handleChange}
