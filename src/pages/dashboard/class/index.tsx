@@ -70,26 +70,26 @@ const ClassDashboardPage = () => {
     },
     {
       name: 'Tên môn',
-      cell: (row) => row.subject_id,
+      cell: (row) => row.subject?.name,
     },
     {
       name: 'Tên khóa',
-      cell: (row) => row.grade_level_id,
+      cell: (row) => row.grade_level?.name,
     },
     {
       name: 'Giảng viên',
-      cell: (row) => row.teacher_id,
+      cell: (row) => row.teacher?.name,
     },
     {
       name: 'Trạng thái',
-      cell: (row) => row.status,
+      cell: (row) => ['', 'Đang mở', 'Chưa mở', 'Đóng'][row.status] || '',
     },
     {
       name: 'Hành động',
       right: true,
       cell: (row) => (
         <>
-        <Tooltip arrow title="Xem danh sách sinh viên" placement="top">
+          <Tooltip arrow title="Xem danh sách sinh viên" placement="top">
             <IconButton
               size="small"
               color="info"
@@ -136,9 +136,7 @@ const ClassDashboardPage = () => {
           <Select
             size="small"
             value={filter.grade}
-            onChange={(e) =>
-              setFilter({ ...filter, grade: e.target.value })
-            }
+            onChange={(e) => setFilter({ ...filter, grade: e.target.value })}
             fullWidth
             sx={{ maxWidth: 300 }}
           >
@@ -203,7 +201,7 @@ const ClassDashboardPage = () => {
         open={!!listStudent}
         onclose={() => setListStudent(null)}
         data={listStudent}
-        onSuccess={handleFetchClass} 
+        onSuccess={handleFetchClass}
       />
     </div>
   )

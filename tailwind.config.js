@@ -10,8 +10,8 @@ module.exports = {
       xs: '420px',
       sm: '640px',
       md: '768px',
-      lg: '992',
-      xl: '1200',
+      lg: '992px',
+      xl: '1200px',
       '2xl': '1536px',
     },
     container: {

@@ -98,7 +98,7 @@ const TeacherDashboardPage = () => {
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Sinh viên</h2>
+        <h2 className="text-2xl font-semibold">Giảng viên</h2>
         <Button onClick={() => setItemToUpdate({})}>
           <AiOutlinePlus /> Thêm
         </Button>
@@ -137,7 +137,7 @@ const TeacherDashboardPage = () => {
             ))}
           </>
         )}
-        {!isLoading && <DataTable data={teachers} columns={columns} />}
+        {!isLoading && <DataTable dense data={teachers} columns={columns} />}
       </div>
       <EditDialog
         open={!!itemToUpdate}

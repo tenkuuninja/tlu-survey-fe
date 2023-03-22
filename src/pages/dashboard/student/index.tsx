@@ -1,3 +1,4 @@
+import { Grid } from '@mui/material'
 import {
   Button,
   IconButton,
@@ -8,7 +9,9 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material'
+import ClassApi from 'common/apis/class'
 import DepartmentApi from 'common/apis/department'
+import GradeApi from 'common/apis/grade'
 import StudentApi from 'common/apis/student'
 import useAuth from 'common/hooks/useAuth'
 import { useEffect, useState } from 'react'
@@ -25,9 +28,15 @@ import EditDialog from './EditDialog'
 const StudentDashboardPage = () => {
   const { role } = useAuth()
   const [departments, setDepartments] = useState<any[]>([])
+  const [gradeLevels, setGradeLevels] = useState<any[]>([])
+  const [classes, setClasses] = useState<any[]>([])
   const [isLoading, setLoading] = useState(false)
   const [search, setSearch] = useState<any>('')
-  const [filter, setFilter] = useState<any>({ department: '0' })
+  const [filter, setFilter] = useState<any>({
+    department: '0',
+    grade_level: '0',
+    class: '0',
+  })
   const [students, setStudents] = useState<any[]>([])
   const [itemToUpdate, setItemToUpdate] = useState<any>(null)
   const [itemToDelete, setItemToDelete] = useState<any>(null)
@@ -35,8 +44,12 @@ const StudentDashboardPage = () => {
   const handleFetchStudent = async () => {
     setLoading(true)
     const params = { ...filter }
+    delete params.grade_level
     if (+params.department === 0) {
       delete params.department
+    }
+    if (+params.class === 0) {
+      delete params.class
     }
     const res = await StudentApi.getAll(params)
     setStudents(res.data)
@@ -54,6 +67,43 @@ const StudentDashboardPage = () => {
     }
     handleFetchDepartment()
   }, [])
+
+  useEffect(() => {
+    const handleFetchGradeLevel = async () => {
+      setFilter({
+        ...filter,
+        grade_level: '0',
+        class: '0',
+      })
+      if (!+filter.department) {
+        setGradeLevels([])
+        return
+      }
+      const res = await GradeApi.getAll({
+        department: +filter.department || '',
+      })
+      setGradeLevels(res.data)
+    }
+    handleFetchGradeLevel()
+  }, [filter.department])
+
+  useEffect(() => {
+    const handleFetchClass = async () => {
+      setFilter({
+        ...filter,
+        class: '0',
+      })
+      if (!+filter.grade_level) {
+        setClasses([])
+        return
+      }
+      const res = await ClassApi.getAll({
+        grade_level: +filter.grade_level || '',
+      })
+      setClasses(res.data)
+    }
+    handleFetchClass()
+  }, [filter.grade_level])
 
   const columns: TableColumn<any>[] = [
     {
@@ -131,45 +181,79 @@ const StudentDashboardPage = () => {
         )}
       </div>
       {role === 'admin' && (
-        <div className="mt-4 flex items-center justify-end gap-4">
-          <Select
-            size="small"
-            value={filter.department}
-            onChange={(e) =>
-              setFilter({ ...filter, department: e.target.value })
-            }
-            fullWidth
-            sx={{ maxWidth: 300 }}
-          >
-            <MenuItem value="0">-- Tất cả khoa --</MenuItem>
-            {departments?.map((item, i) => (
-              <MenuItem value={item?.id} key={i}>
-                {item?.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <TextField
-            size="small"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            fullWidth
-            placeholder="Tìm kiếm"
-            sx={{ maxWidth: 300 }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Tooltip arrow title="Tìm kiếm" placement="top">
-                    <IconButton
-                      onClick={() => setFilter({ ...filter, search: search })}
-                    >
-                      <AiOutlineSearch />
-                    </IconButton>
-                  </Tooltip>
-                </InputAdornment>
-              ),
-            }}
-          />
-        </div>
+        <Grid container spacing={[2, 2]} className="mt-4">
+          <Grid item xs={12} md={6} lg={3}>
+            <Select
+              size="small"
+              value={+filter.department}
+              onChange={(e) =>
+                setFilter({ ...filter, department: e.target.value })
+              }
+              fullWidth
+            >
+              <MenuItem value="0">-- Tất cả khoa --</MenuItem>
+              {departments?.map((item, i) => (
+                <MenuItem value={+item?.id} key={i}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Select
+              size="small"
+              value={filter.grade_level}
+              onChange={(e) =>
+                setFilter({ ...filter, grade_level: e.target.value })
+              }
+              fullWidth
+            >
+              <MenuItem value="0">-- Tất cả khoá --</MenuItem>
+              {gradeLevels?.map((item, i) => (
+                <MenuItem value={item?.id} key={i}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Select
+              size="small"
+              value={filter.class}
+              onChange={(e) => setFilter({ ...filter, class: e.target.value })}
+              fullWidth
+            >
+              <MenuItem value="0">-- Tất cả lớp --</MenuItem>
+              {classes?.map((item, i) => (
+                <MenuItem value={item?.id} key={i}>
+                  {item?.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <TextField
+              size="small"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              fullWidth
+              placeholder="Tìm kiếm"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Tooltip arrow title="Tìm kiếm" placement="top">
+                      <IconButton
+                        onClick={() => setFilter({ ...filter, search: search })}
+                      >
+                        <AiOutlineSearch />
+                      </IconButton>
+                    </Tooltip>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+        </Grid>
       )}
       <div className="mt-10">
         {isLoading && (

@@ -120,7 +120,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
         <DialogTitle>{isUpdate ? 'Sửa' : 'Thêm'} giảng viên</DialogTitle>
         <DialogContent>
           <Grid container spacing={[2, 2]}>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Họ tên</FormLabel>
                 <TextField
@@ -135,7 +135,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Căn cước công dân</FormLabel>
                 <TextField
@@ -151,7 +151,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
               </FormControl>
             </Grid>
 
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Khoa</FormLabel>
                 <Select
@@ -160,6 +160,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                   disabled={isUpdate}
                   value={formik.values.department_id}
                   onChange={formik.handleChange}
+                  fullWidth
                 >
                   {departments?.map((item, i) => (
                     <MenuItem value={item?.id} key={i}>
@@ -174,7 +175,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 )}
               </FormControl>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Mã giảng viên</FormLabel>
                 <TextField
@@ -191,7 +192,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
               </FormControl>
             </Grid>
 
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Địa chỉ</FormLabel>
                 <TextField
@@ -206,7 +207,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Số điện thoại</FormLabel>
                 <TextField
@@ -222,7 +223,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
               </FormControl>
             </Grid>
 
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Tên đăng nhập</FormLabel>
                 <TextField
@@ -237,7 +238,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Mật khẩu</FormLabel>
                 <TextField
@@ -270,7 +271,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
               </FormControl>
             </Grid>
 
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormLabel>Giới tính</FormLabel>
               <RadioGroup
                 row
@@ -289,7 +290,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
             </Grid>
 
             {isUpdate && (
-              <Grid item md={6}>
+              <Grid item xs={12} md={6}>
                 <FormLabel>Trạng thái</FormLabel>
                 <RadioGroup
                   row

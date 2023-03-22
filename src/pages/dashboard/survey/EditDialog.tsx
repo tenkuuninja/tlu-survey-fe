@@ -147,7 +147,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
           {formik.values.questions.map((question, i) => (
             <Paper sx={{ mt: 2, p: 2 }} elevation={2}>
               <Grid container spacing={[2, 2]}>
-                <Grid item xs={6}>
+                <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
                     <TextField
                       size="small"
@@ -164,7 +164,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item md={6}>
+                <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
                     <Autocomplete
                       options={questionTypes}

@@ -20,16 +20,12 @@ const StatisticDialog = ({ open, onClose, data, onSuccess }) => {
   const { user, role } = useAuth()
   const [isLoading, setLoading] = useState(false)
   const [tabActive, setTabActive] = useState(0)
-  const [userAnswer, setUserAnswer] = useState([])
   const [answers, setAnswers] = useState([])
   const isUpdate = !!data?.id
 
   useEffect(() => {
     const handleGetAnswerData = async () => {
-      const userAnswerRes = await SurveyApi.getAnswer(data?.id, user.id)
       const answerRes = await SurveyApi.getAnswerBySurveyId(data?.id)
-
-      setUserAnswer(userAnswerRes?.data)
       setAnswers(answerRes?.data)
     }
     if (data?.id) {
@@ -60,18 +56,9 @@ const StatisticDialog = ({ open, onClose, data, onSuccess }) => {
           <Tab value={1} label="Bản câu hỏi" />
           <Tab value={2} label="Cá nhân" />
         </Tabs>
-        {tabActive === 0 && <Summary survey={data} answers={userAnswer} />}
-        {tabActive === 1 && (
-          <QuestionDetail survey={data} answers={userAnswer} />
-        )}
-        {tabActive === 2 && (
-          <PersonalDetail survey={data} answers={userAnswer} />
-        )}
-        {tabActive === 4 && (
-          <>
-            <SurveyResult survey={data} answers={userAnswer} hideAlert />
-          </>
-        )}
+        {tabActive === 0 && <Summary survey={data} answers={answers} />}
+        {tabActive === 1 && <QuestionDetail survey={data} answers={answers} />}
+        {tabActive === 2 && <PersonalDetail survey={data} answers={answers} />}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Đóng</Button>

@@ -11,14 +11,10 @@ import ClassApi from 'common/apis/class'
 import useAuth from 'common/hooks/useAuth'
 import { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
-import DataTable, {TableColumn} from 'react-data-table-component'
-import {
-  AiOutlineDelete,
-  AiOutlinePlus,
-} from 'react-icons/ai'
+import DataTable, { TableColumn } from 'react-data-table-component'
+import { AiOutlineDelete, AiOutlinePlus } from 'react-icons/ai'
 import DeleteStudentDialog from './DeleteStudentDialog'
 import AddStudentDialog from './AddStudentDialog'
-
 
 const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
   const { role } = useAuth()
@@ -26,7 +22,6 @@ const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
   const [listStudents, setlistStudents] = useState<any[]>([])
   const [itemToDelete, setItemToDelete] = useState<any>(null)
   const [itemToUpdate, setItemToUpdate] = useState<any>(null)
-
 
   const handleFetchListStudent = async () => {
     setLoading(true)
@@ -54,7 +49,7 @@ const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
     },
     {
       name: 'Khoa',
-      selector: (row) => row.department,
+      selector: (row) => row.department?.code,
     },
     {
       name: 'Hành động',
@@ -64,7 +59,9 @@ const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
             <IconButton
               size="small"
               color="error"
-              onClick={() => setItemToDelete({class_id:data.id, student_id:row.id})}
+              onClick={() =>
+                setItemToDelete({ class_id: data.id, student_id: row.id })
+              }
             >
               <AiOutlineDelete />
             </IconButton>
@@ -80,28 +77,28 @@ const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold">Danh sách sinh viên</h2>
           {role === 'admin' && (
-          <Button onClick={() => setItemToUpdate({class_id:data.id})}>
-            <AiOutlinePlus /> Thêm
-          </Button>
-        )}
+            <Button onClick={() => setItemToUpdate({ class_id: data.id })}>
+              <AiOutlinePlus /> Thêm
+            </Button>
+          )}
         </div>
       </DialogTitle>
       <DialogContent>
-      <div className="mt-10">
-        {isLoading && (
-          <>
-            {[...new Array(10)].map((item, i) => (
-              <Skeleton
-                variant="rectangular"
-                height={32}
-                sx={{ mt: 2 }}
-                key={i}
-              />
-            ))}
-          </>
-        )}
-        {!isLoading && <DataTable data={listStudents} columns={columns} />}
-      </div>
+        <div className="mt-10">
+          {isLoading && (
+            <>
+              {[...new Array(10)].map((item, i) => (
+                <Skeleton
+                  variant="rectangular"
+                  height={32}
+                  sx={{ mt: 2 }}
+                  key={i}
+                />
+              ))}
+            </>
+          )}
+          {!isLoading && <DataTable data={listStudents} columns={columns} />}
+        </div>
       </DialogContent>
 
       <AddStudentDialog
@@ -116,10 +113,8 @@ const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
         onClose={() => setItemToDelete(null)}
         data={itemToDelete}
         onSuccess={handleFetchListStudent}
-    />
+      />
     </Dialog>
-
-    
   )
 }
 export default ListStudentDialog

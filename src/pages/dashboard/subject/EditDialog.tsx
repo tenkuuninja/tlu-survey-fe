@@ -87,7 +87,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
         <DialogTitle>{isUpdate ? 'Sửa' : 'Thêm'} môn học</DialogTitle>
         <DialogContent>
           <Grid container spacing={[2, 2]}>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Mã môn</FormLabel>
                 <TextField
@@ -102,7 +102,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Tên môn</FormLabel>
                 <TextField
@@ -118,7 +118,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
               </FormControl>
             </Grid>
 
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Khoa</FormLabel>
                 <Select
@@ -140,7 +140,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 )}
               </FormControl>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Số tín chỉ</FormLabel>
                 <TextField
@@ -156,7 +156,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item md={6}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <FormLabel>Mô tả</FormLabel>
                 <TextField
@@ -171,7 +171,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 />
               </FormControl>
             </Grid>
-            <Grid item md={6}></Grid>
+            <Grid item xs={12} md={6}></Grid>
           </Grid>
         </DialogContent>
         <DialogActions>

@@ -22,6 +22,7 @@ import {
 import { Link } from 'react-router-dom'
 import DeleteDialog from './DeleteDialog'
 import EditDialog from './EditDialog'
+import SelfSurveyDialog from './SelfSurvey'
 import SettingDialog from './SettingDialog'
 import StatisticDialog from './StatisticDialog'
 
@@ -33,6 +34,7 @@ const SurveyDashboardPage = () => {
   const [itemToDelete, setItemToDelete] = useState<any>(null)
   const [itemToStatistic, setItemToStatistic] = useState<any>(null)
   const [itemToSetting, setItemToSetting] = useState<any>(null)
+  const [itemToShowMySelfResult, setItemToShowSelfResult] = useState<any>(null)
 
   const handleFetchItem = async () => {
     setLoading(true)
@@ -49,6 +51,7 @@ const SurveyDashboardPage = () => {
     {
       name: '#',
       selector: (row) => row.id,
+      width: '60px',
     },
     {
       name: 'Mã',
@@ -78,6 +81,15 @@ const SurveyDashboardPage = () => {
               </IconButton>
             </Tooltip>
           </Link>
+          <Tooltip arrow title="Xem kết quả" placement="top">
+            <IconButton
+              size="small"
+              color="info"
+              onClick={() => setItemToShowSelfResult(row)}
+            >
+              <AiOutlineEye />
+            </IconButton>
+          </Tooltip>
           <Tooltip arrow title="Thống kê" placement="top">
             <IconButton
               size="small"
@@ -162,7 +174,7 @@ const SurveyDashboardPage = () => {
             ))}
           </>
         )}
-        {!isLoading && <DataTable data={surveys} columns={columns} />}
+        {!isLoading && <DataTable dense data={surveys} columns={columns} />}
       </div>
       <EditDialog
         open={!!itemToUpdate}
@@ -187,6 +199,11 @@ const SurveyDashboardPage = () => {
         onClose={() => setItemToSetting(null)}
         data={itemToSetting}
         onSuccess={setItemToSetting}
+      />
+      <SelfSurveyDialog
+        open={!!itemToShowMySelfResult}
+        onClose={() => setItemToShowSelfResult(null)}
+        data={itemToShowMySelfResult}
       />
     </div>
   )
