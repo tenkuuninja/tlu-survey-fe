@@ -71,40 +71,19 @@ const StudentDashboardPage = () => {
 
   useEffect(() => {
     const handleFetchGradeLevel = async () => {
-      setFilter({
-        ...filter,
-        grade_level: '0',
-        class: '0',
-      })
-      if (!+filter.department) {
-        setGradeLevels([])
-        return
-      }
-      const res = await GradeApi.getAll({
-        department: +filter.department || '',
-      })
+      const res = await GradeApi.getAll()
       setGradeLevels(res.data)
     }
     handleFetchGradeLevel()
-  }, [filter.department])
+  }, [])
 
   useEffect(() => {
     const handleFetchClass = async () => {
-      setFilter({
-        ...filter,
-        class: '0',
-      })
-      if (!+filter.grade_level) {
-        setClasses([])
-        return
-      }
-      const res = await ClassApi.getAll({
-        grade_level: +filter.grade_level || '',
-      })
+      const res = await ClassApi.getAll()
       setClasses(res.data)
     }
     handleFetchClass()
-  }, [filter.grade_level])
+  }, [])
 
   const columns: TableColumn<any>[] = [
     {
@@ -119,6 +98,10 @@ const StudentDashboardPage = () => {
     {
       name: 'Thuộc khoa',
       cell: (row) => row.department?.code,
+    },
+    {
+      name: 'Tên khóa',
+      cell: (row) => row.grade_level?.name,
     },
     {
       name: 'Tên đăng nhập',

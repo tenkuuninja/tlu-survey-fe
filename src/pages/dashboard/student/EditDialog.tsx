@@ -18,6 +18,7 @@ import {
   TextField,
 } from '@mui/material'
 import DepartmentApi from 'common/apis/department'
+import GradeApi from 'common/apis/grade'
 import StudentApi from 'common/apis/student'
 import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
@@ -36,6 +37,7 @@ const initialValues = {
   citizen_id: '',
   address: '',
   department_id: null,
+  grade_level_id: '',
   name: '',
   password: '',
   phone_number: '',
@@ -47,6 +49,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
   const [isLoading, setLoading] = useState(false)
   const [iShowPassword, setShowPassword] = useState(false)
   const [departments, setDepartments] = useState<any[]>([])
+  const [grades, setGrades] = useState<any[]>([])
   const isUpdate = !!data?.id
 
   const validationSchema = yup.object({
@@ -57,6 +60,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
       .min(8, 'Tên đăng nhập phải có độ dài tối thiếu 8 ký tự'),
     citizen_id: yup.string().required('Căn cước công dân không được để trống'),
     department_id: yup.mixed().required('Khoa không được để trống'),
+    grade_level_id: yup.mixed().required('Khoá không được để trống'),
     name: yup.string().required('Tên không được để trống'),
     address: yup.string().required('địa chỉ không được để trống'),
     password: isUpdate
@@ -105,6 +109,14 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
       setDepartments(res.data)
     }
     handleFetchDepartments()
+  }, [])
+
+  useEffect(() => {
+    const handleFetchGrade = async () => {
+      const res = await GradeApi.getAll()
+      setGrades(res.data)
+    }
+    handleFetchGrade()
   }, [])
 
   useEffect(() => {
@@ -177,6 +189,29 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
             </Grid>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
+                <FormLabel>Thuộc khóa</FormLabel>
+                <Select
+                  size="small"
+                  name="grade_level_id"
+                  value={formik.values.grade_level_id}
+                  onChange={formik.handleChange}
+                >
+                  {grades?.map((item, i) => (
+                    <MenuItem value={item?.id} key={i}>
+                      {item?.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {!!formik.errors.grade_level_id && (
+                  <FormHelperText error={true}>
+                    {formik.errors.grade_level_id}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
                 <FormLabel>Mã sinh viên</FormLabel>
                 <TextField
                   size="small"
@@ -191,6 +226,7 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
                 />
               </FormControl>
             </Grid>
+            <Grid item xs={12} md={6}></Grid>
 
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
