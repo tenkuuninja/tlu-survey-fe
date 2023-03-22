@@ -25,14 +25,16 @@ const ListStudentDialog = ({ open, onclose, data, onSuccess }) => {
 
   const handleFetchListStudent = async () => {
     setLoading(true)
-    const res = await ClassApi.getListStudent(1)
+    const res = await ClassApi.getListStudent(data?.id)
     setlistStudents(res.data)
     setLoading(false)
   }
 
   useEffect(() => {
-    handleFetchListStudent()
-  }, [])
+    if (data?.id) {
+      handleFetchListStudent()
+    }
+  }, [data])
 
   const columns: TableColumn<any>[] = [
     {

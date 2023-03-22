@@ -8,6 +8,7 @@ import {
 } from '@mui/material'
 import SurveyApi from 'common/apis/survey'
 import { toSlug } from 'common/helpers/string'
+import useAuth from 'common/hooks/useAuth'
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import {
@@ -28,6 +29,7 @@ import SettingDialog from './SettingDialog'
 import StatisticDialog from './StatisticDialog'
 
 const SurveyDashboardPage = () => {
+  const { role } = useAuth()
   const [isLoading, setLoading] = useState(false)
   const [filter, setFilter] = useState<any>({})
   const [surveys, setSurveys] = useState<any[]>([])
@@ -85,52 +87,61 @@ const SurveyDashboardPage = () => {
               </IconButton>
             </Tooltip>
           </Link>
-          <Tooltip arrow title="Xem kết quả" placement="top">
-            <IconButton
-              size="small"
-              color="info"
-              onClick={() => setItemToShowSelfResult(row)}
-            >
-              <AiOutlineEye />
-            </IconButton>
-          </Tooltip>
-          <Tooltip arrow title="Thống kê" placement="top">
-            <IconButton
-              size="small"
-              color="info"
-              onClick={() => setItemToStatistic(row)}
-            >
-              <AiOutlineBarChart />
-            </IconButton>
-          </Tooltip>
-          <Tooltip arrow title="Cài đặt" placement="top">
-            <IconButton
-              size="small"
-              color="info"
-              onClick={() => setItemToSetting(row)}
-            >
-              <AiOutlineSetting />
-            </IconButton>
-          </Tooltip>
-          <Tooltip arrow title="Sửa" placement="top">
-            <IconButton
-              size="small"
-              color="info"
-              onClick={() => setItemToUpdate(row)}
-            >
-              <AiOutlineEdit />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip arrow title="Xoá" placement="top">
-            <IconButton
-              size="small"
-              color="error"
-              onClick={() => setItemToDelete(row)}
-            >
-              <AiOutlineDelete />
-            </IconButton>
-          </Tooltip>
+          {['teacher', 'student'].includes(role) && (
+            <Tooltip arrow title="Xem kết quả" placement="top">
+              <IconButton
+                size="small"
+                color="info"
+                onClick={() => setItemToShowSelfResult(row)}
+              >
+                <AiOutlineEye />
+              </IconButton>
+            </Tooltip>
+          )}
+          {['admin'].includes(role) && (
+            <Tooltip arrow title="Thống kê" placement="top">
+              <IconButton
+                size="small"
+                color="info"
+                onClick={() => setItemToStatistic(row)}
+              >
+                <AiOutlineBarChart />
+              </IconButton>
+            </Tooltip>
+          )}
+          {['admin', 'teacher'].includes(role) && (
+            <Tooltip arrow title="Cài đặt" placement="top">
+              <IconButton
+                size="small"
+                color="info"
+                onClick={() => setItemToSetting(row)}
+              >
+                <AiOutlineSetting />
+              </IconButton>
+            </Tooltip>
+          )}
+          {['admin', 'teacher'].includes(role) && (
+            <Tooltip arrow title="Sửa" placement="top">
+              <IconButton
+                size="small"
+                color="info"
+                onClick={() => setItemToUpdate(row)}
+              >
+                <AiOutlineEdit />
+              </IconButton>
+            </Tooltip>
+          )}
+          {['admin', 'teacher'].includes(role) && (
+            <Tooltip arrow title="Xoá" placement="top">
+              <IconButton
+                size="small"
+                color="error"
+                onClick={() => setItemToDelete(row)}
+              >
+                <AiOutlineDelete />
+              </IconButton>
+            </Tooltip>
+          )}
         </>
       ),
     },
@@ -140,9 +151,11 @@ const SurveyDashboardPage = () => {
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Biểu mẫu khảo sát</h2>
-        <Button onClick={() => setItemToUpdate({})}>
-          <AiOutlinePlus /> Thêm
-        </Button>
+        {['admin', 'teacher'].includes(role) && (
+          <Button onClick={() => setItemToUpdate({})}>
+            <AiOutlinePlus /> Thêm
+          </Button>
+        )}
       </div>
       <div className="mt-4 flex items-center justify-end">
         <TextField

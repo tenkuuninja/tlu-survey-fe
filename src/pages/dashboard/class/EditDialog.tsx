@@ -72,8 +72,6 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
     },
   })
 
-  console.log(formik.values)
-
   useEffect(() => {
     const handleFetchSubject = async () => {
       const res = await SubjectApi.getAll()

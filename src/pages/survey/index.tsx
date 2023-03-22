@@ -1,6 +1,8 @@
+import { Skeleton } from '@mui/material'
 import { Paper } from '@mui/material'
 import SurveyApi from 'common/apis/survey'
 import SurveyResult from 'common/components/SurveyResult'
+import { shuffleArray } from 'common/helpers/array'
 import useAuth from 'common/hooks/useAuth'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -23,6 +25,9 @@ const SurveyPage = () => {
     const handleGetSurvey = async () => {
       setLoading(true)
       const resSurvey = await SurveyApi.getById(id)
+      if (resSurvey?.data?.option?.shuffle_question_order) {
+        shuffleArray(resSurvey?.data?.questions)
+      }
       setSurvey(resSurvey?.data)
 
       const resAnswer = await SurveyApi.getAnswer(resSurvey?.data?.id, user.id)
@@ -42,7 +47,15 @@ const SurveyPage = () => {
   }
 
   if (isLoading) {
-    return <></>
+    return (
+      <Paper className="mx-auto mt-4 max-w-[576px] space-y-4 py-4 px-4">
+        <Skeleton height={30} />
+        <Skeleton height={50} />
+        <Skeleton height={50} />
+        <Skeleton height={50} />
+        <Skeleton height={50} />
+      </Paper>
+    )
   }
 
   if (isSubmited && !!survey?.option?.limit) {

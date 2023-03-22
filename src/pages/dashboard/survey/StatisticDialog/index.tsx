@@ -1,3 +1,4 @@
+import { Skeleton } from '@mui/material'
 import {
   Button,
   Dialog,
@@ -25,8 +26,12 @@ const StatisticDialog = ({ open, onClose, data, onSuccess }) => {
 
   useEffect(() => {
     const handleGetAnswerData = async () => {
-      const answerRes = await SurveyApi.getAnswerBySurveyId(data?.id)
-      setAnswers(answerRes?.data)
+      setLoading(true)
+      try {
+        const answerRes = await SurveyApi.getAnswerBySurveyId(data?.id)
+        setAnswers(answerRes?.data)
+      } catch (error) {}
+      setLoading(false)
     }
     if (data?.id) {
       handleGetAnswerData()
@@ -43,10 +48,24 @@ const StatisticDialog = ({ open, onClose, data, onSuccess }) => {
     }
   }, [open])
 
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Thống biểu mẫu khảo sát</DialogTitle>
-      <DialogContent>
+  let content = <></>
+
+  if (isLoading) {
+    content = (
+      <div className="space-y-3">
+        <Skeleton height={30} />
+        <Skeleton height={30} />
+        <Skeleton height={30} />
+        <Skeleton height={30} />
+        <Skeleton height={30} />
+        <Skeleton height={30} />
+      </div>
+    )
+  } else if (!answers?.length) {
+    content = <p className="text-24px">Biểu mẫu này chưa được nộp lần nào</p>
+  } else {
+    content = (
+      <>
         <Tabs
           value={tabActive}
           onChange={(e, v) => setTabActive(v)}
@@ -59,7 +78,14 @@ const StatisticDialog = ({ open, onClose, data, onSuccess }) => {
         {tabActive === 0 && <Summary survey={data} answers={answers} />}
         {tabActive === 1 && <QuestionDetail survey={data} answers={answers} />}
         {tabActive === 2 && <PersonalDetail survey={data} answers={answers} />}
-      </DialogContent>
+      </>
+    )
+  }
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+      <DialogTitle>Thống biểu mẫu khảo sát</DialogTitle>
+      <DialogContent>{content}</DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Đóng</Button>
         <Button
