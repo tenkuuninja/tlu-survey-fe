@@ -42,10 +42,17 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
   const isUpdate = !!data?.id
 
   const validationSchema = yup.object({
-    code: yup.string().required('Mã lớp không được để trống'),
-    name: yup.string().required('Tên không được để trống'),
+    code: yup
+      .string()
+      .required('Mã lớp không được để trống')
+      .matches(/[A-Za-z0-9]/g, 'Mã lớp chưa đúng định dạng'),
+    name: yup
+      .string()
+      .required('Tên không được để trống')
+      .matches(/[A-Za-z0-9]/g, 'Tên lớp chưa đúng định dạng'),
     subject_id: yup.string().required('Mã môn không được để trống'),
     teacher_id: yup.string().required('Mã giảng viên không được để trống'),
+    grade_level_id: yup.string().required('Mã khoá không được để trống'),
     status: yup.string().required('Trạng thái không được để trống'),
   })
 

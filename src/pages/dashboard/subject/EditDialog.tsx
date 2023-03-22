@@ -37,8 +37,14 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
   const isUpdate = !!data?.id
 
   const validationSchema = yup.object({
-    code: yup.string().required('Mã môn không được để trống'),
-    name: yup.string().required('Tên môn không được để trống'),
+    code: yup
+      .string()
+      .required('Mã môn không được để trống')
+      .matches(/[A-Za-z0-9]/g, 'Mã môn học chưa đúng định dạng'),
+    name: yup
+      .string()
+      .required('Tên môn không được để trống')
+      .matches(/[A-Za-z0-9]/g, 'Tên môn học chưa đúng định dạng'),
     department_id: yup.mixed().required('Khoa không được để trống'),
     credit_number: yup.string().required('Số tín chỉ không được để trống'),
   })
