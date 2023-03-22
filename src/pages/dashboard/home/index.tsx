@@ -5,11 +5,15 @@ import { BsPeople } from 'react-icons/bs'
 import { SlGraduation } from 'react-icons/sl'
 import { VscOpenPreview } from 'react-icons/vsc'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet'
 
 const DashboardPage = () => {
   const { role } = useAuth()
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
+      <Helmet>
+        <title>Bảng điều khiển | Trang khảo sát Đại học Thuỷ Lợi</title>
+      </Helmet>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         {menu
           ?.filter((item) => item.roles.includes(role))

@@ -24,6 +24,7 @@ import {
 } from 'react-icons/ai'
 import DeleteDialog from './DeleteDialog'
 import EditDialog from './EditDialog'
+import { Helmet } from 'react-helmet'
 
 const StudentDashboardPage = () => {
   const { role } = useAuth()
@@ -172,6 +173,9 @@ const StudentDashboardPage = () => {
 
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
+      <Helmet>
+        <title>Quảng lý sinh viên | Trang khảo sát Đại học Thuỷ Lợi</title>
+      </Helmet>
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Sinh viên</h2>
         {role === 'admin' && (

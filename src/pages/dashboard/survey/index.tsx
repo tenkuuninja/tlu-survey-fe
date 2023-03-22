@@ -27,6 +27,7 @@ import EditDialog from './EditDialog'
 import SelfSurveyDialog from './SelfSurvey'
 import SettingDialog from './SettingDialog'
 import StatisticDialog from './StatisticDialog'
+import { Helmet } from 'react-helmet'
 
 const SurveyDashboardPage = () => {
   const { role } = useAuth()
@@ -149,6 +150,9 @@ const SurveyDashboardPage = () => {
 
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
+      <Helmet>
+        <title>Quảng lý khảo sát | Trang khảo sát Đại học Thuỷ Lợi</title>
+      </Helmet>
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Biểu mẫu khảo sát</h2>
         {['admin', 'teacher'].includes(role) && (

@@ -12,6 +12,7 @@ import { useFormik } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import * as yup from 'yup'
+import { Helmet } from 'react-helmet'
 
 const validationSchema = yup.object({
   old_password: yup
@@ -45,6 +46,9 @@ const ChangePasswordDashboardPage = () => {
 
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
+      <Helmet>
+        <title>Đổi mật khẩu | Trang khảo sát Đại học Thuỷ Lợi</title>
+      </Helmet>
       <h2 className="text-2xl font-semibold">Đổi mật khẩu</h2>
       <form className="max-w-[400px]" onSubmit={formik.handleSubmit}>
         <FormControl className="mt-10" fullWidth>

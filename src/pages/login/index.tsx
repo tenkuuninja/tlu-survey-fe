@@ -2,6 +2,7 @@ import { Button, FormControl, MenuItem, Select, TextField } from '@mui/material'
 import useAuth from 'common/hooks/useAuth'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
+import { Helmet } from 'react-helmet'
 
 const validationSchema = yup.object({
   username: yup
@@ -36,6 +37,9 @@ const LoginPage = () => {
 
   return (
     <div className="text-neutral-800">
+      <Helmet>
+        <title>Đăng nhập | Trang khảo sát Đại học Thuỷ Lợi</title>
+      </Helmet>
       <div className="top-1/2 left-1/2 mx-auto flex w-screen max-w-[768px] flex-wrap overflow-hidden rounded bg-white shadow-lg shadow-neutral-300 md:fixed md:-translate-x-1/2 md:-translate-y-1/2">
         <div className="flex items-center bg-gradient-to-r from-[#67D7F5] to-[#86F7CC] md:w-[50%]">
           <img

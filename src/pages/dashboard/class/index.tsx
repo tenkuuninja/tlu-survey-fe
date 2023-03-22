@@ -23,6 +23,7 @@ import {
 import DeleteDialog from './DeleteDialog'
 import EditDialog from './EditDialog'
 import ListStudentDialog from './ListStudentDialog'
+import { Helmet } from 'react-helmet'
 
 const ClassDashboardPage = () => {
   const { role } = useAuth()
@@ -123,6 +124,9 @@ const ClassDashboardPage = () => {
 
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
+      <Helmet>
+        <title>Quản lý lớp học | Trang khảo sát Đại học Thuỷ Lợi</title>
+      </Helmet>
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Lớp học</h2>
         {role === 'admin' && (

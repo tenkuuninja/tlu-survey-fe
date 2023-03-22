@@ -1,18 +1,18 @@
-import { 
-  Button, 
-  IconButton, 
+import {
+  Button,
+  IconButton,
   Skeleton,
   TextField,
   InputAdornment,
   Tooltip,
   Select,
-  MenuItem, 
+  MenuItem,
 } from '@mui/material'
 import SubjectApi from 'common/apis/subject'
 import DepartmentApi from 'common/apis/department'
 import useAuth from 'common/hooks/useAuth'
 import { useEffect, useState } from 'react'
-import DataTable, {TableColumn} from 'react-data-table-component'
+import DataTable, { TableColumn } from 'react-data-table-component'
 import {
   AiOutlineDelete,
   AiOutlineEdit,
@@ -21,7 +21,8 @@ import {
 } from 'react-icons/ai'
 import EditDialog from './EditDialog'
 import DeleteDialog from './DeleteDialog'
- 
+import { Helmet } from 'react-helmet'
+
 const SubjectDashboardPage = () => {
   const { role } = useAuth()
   const [isLoading, setLoading] = useState(false)
@@ -31,7 +32,7 @@ const SubjectDashboardPage = () => {
   const [subjectToUpdate, setSubjectToUpdate] = useState<any>(null)
   const [subjectToDelete, setSubjectToDelete] = useState<any>(null)
 
-  const handleFetchSubject = async() => {
+  const handleFetchSubject = async () => {
     setLoading(true)
     const params = { ...filter }
     if (+params.department === 0) {
@@ -100,6 +101,9 @@ const SubjectDashboardPage = () => {
 
   return (
     <div className="min-h-[600px] rounded-md border border-neutral-100 bg-white p-4">
+      <Helmet>
+        <title>Quảng lý môn học | Trang khảo sát Đại học Thuỷ Lợi</title>
+      </Helmet>
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Môn học</h2>
         {role === 'admin' && (
@@ -107,10 +111,10 @@ const SubjectDashboardPage = () => {
             <AiOutlinePlus /> Thêm
           </Button>
         )}
-        </div>
-        {role === 'admin' && (
+      </div>
+      {role === 'admin' && (
         <div className="mt-4 flex items-center justify-end gap-4">
-        <Select
+          <Select
             size="small"
             value={filter.department}
             onChange={(e) =>
@@ -125,31 +129,31 @@ const SubjectDashboardPage = () => {
                 {item?.name}
               </MenuItem>
             ))}
-          </Select>   
-        <TextField
-          size="small"
-          value={filter?.search || ''}
-          onChange={(e) => setFilter({ search: e.target.value })}
-          fullWidth
-          placeholder="Tìm kiếm"
-          sx={{ maxWidth: 300 }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Tooltip arrow title="Tìm kiếm" placement="top">
-                  <IconButton onClick={handleFetchSubject}>
-                    <AiOutlineSearch />
-                  </IconButton>
-                </Tooltip>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </div> 
-        )}
-      
+          </Select>
+          <TextField
+            size="small"
+            value={filter?.search || ''}
+            onChange={(e) => setFilter({ search: e.target.value })}
+            fullWidth
+            placeholder="Tìm kiếm"
+            sx={{ maxWidth: 300 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Tooltip arrow title="Tìm kiếm" placement="top">
+                    <IconButton onClick={handleFetchSubject}>
+                      <AiOutlineSearch />
+                    </IconButton>
+                  </Tooltip>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </div>
+      )}
+
       <div className="mt-10">
-      {isLoading && (
+        {isLoading && (
           <>
             {[...new Array(10)].map((item, i) => (
               <Skeleton
