@@ -28,6 +28,7 @@ import SelfSurveyDialog from './SelfSurvey'
 import SettingDialog from './SettingDialog'
 import StatisticDialog from './StatisticDialog'
 import { Helmet } from 'react-helmet'
+import { toast } from 'react-toastify'
 
 const SurveyDashboardPage = () => {
   const { role } = useAuth()
@@ -122,7 +123,18 @@ const SurveyDashboardPage = () => {
               <IconButton
                 size="small"
                 color="info"
-                onClick={() => setItemToUpdate(row)}
+                onClick={() => {
+                  if (
+                    row?.user_surveys?.filter((item) => item?.is_finish)
+                      ?.length > 0
+                  ) {
+                    toast.info(
+                      'Biểu mẫu này không thể sửa do đã có người trả lời',
+                    )
+                  } else {
+                    setItemToUpdate(row)
+                  }
+                }}
               >
                 <AiOutlineEdit />
               </IconButton>
