@@ -74,9 +74,9 @@ const SettingDialog = ({ open, onClose, data, onSuccess }) => {
         body.class_ids = values?.classes?.map((item) => item.id)
         body.student_ids = values?.students?.map((item) => item?.id)
         console.log(body)
-        // onClose()
-        onSuccess && onSuccess()
         await SurveyApi.updateSurveyOption(data?.id, body)
+        onClose()
+        onSuccess && onSuccess()
         toast.success('Cập nhật cài đặt khảo sát thành công')
       } catch (error) {
         toast.error('Đã xảy ra lỗi không xác định')

@@ -30,7 +30,7 @@ const ClassDashboardPage = () => {
   const [grades, setGrades] = useState<any[]>([])
   const [isLoading, setLoading] = useState(false)
   const [search, setSearch] = useState<any>('')
-  const [filter, setFilter] = useState<any>({ grade: '0' })
+  const [filter, setFilter] = useState<any>({ grade_level: '0' })
   const [classes, setClasses] = useState<any[]>([])
   const [itemToUpdate, setItemToUpdate] = useState<any>(null)
   const [itemToDelete, setItemToDelete] = useState<any>(null)
@@ -39,8 +39,8 @@ const ClassDashboardPage = () => {
   const handleFetchClass = async () => {
     setLoading(true)
     const params = { ...filter }
-    if (+params.grade === 0) {
-      delete params.grade
+    if (+params.grade_level === 0) {
+      delete params.grade_level
     }
     const res = await ClassApi.getAll(params)
     setClasses(res.data)
@@ -139,8 +139,10 @@ const ClassDashboardPage = () => {
         <div className="mt-4 flex items-center justify-end gap-4">
           <Select
             size="small"
-            value={filter.grade}
-            onChange={(e) => setFilter({ ...filter, grade: e.target.value })}
+            value={filter.grade_level}
+            onChange={(e) =>
+              setFilter({ ...filter, grade_level: e.target.value })
+            }
             fullWidth
             sx={{ maxWidth: 300 }}
           >

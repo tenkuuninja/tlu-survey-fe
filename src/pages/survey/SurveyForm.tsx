@@ -62,6 +62,7 @@ const SurveyForm = ({ survey, onSuccess }) => {
           )
         ) {
           setLoadingSubmit(false)
+          setOpenConfirmDialog(false)
           return toast.warning('Các trường có dấu * không được để trống')
         }
       }
@@ -74,6 +75,7 @@ const SurveyForm = ({ survey, onSuccess }) => {
             survey_id: survey.id,
           },
         })
+        setOpenConfirmDialog(false)
         toast.success('Gửi thành công')
         onSuccess && onSuccess()
       } catch (error) {

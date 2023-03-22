@@ -26,7 +26,7 @@ import { Helmet } from 'react-helmet'
 const SubjectDashboardPage = () => {
   const { role } = useAuth()
   const [isLoading, setLoading] = useState(false)
-  const [filter, setFilter] = useState<any>({})
+  const [filter, setFilter] = useState<any>({ department: 0 })
   const [subjects, setSubjects] = useState<any[]>([])
   const [departments, setDepartments] = useState<any[]>([])
   const [subjectToUpdate, setSubjectToUpdate] = useState<any>(null)
@@ -116,7 +116,7 @@ const SubjectDashboardPage = () => {
         <div className="mt-4 flex items-center justify-end gap-4">
           <Select
             size="small"
-            value={filter.department}
+            value={+filter.department}
             onChange={(e) =>
               setFilter({ ...filter, department: e.target.value })
             }
@@ -125,7 +125,7 @@ const SubjectDashboardPage = () => {
           >
             <MenuItem value="0">-- Tất cả khoa --</MenuItem>
             {departments?.map((item, i) => (
-              <MenuItem value={item?.id} key={i}>
+              <MenuItem value={+item?.id} key={i}>
                 {item?.name}
               </MenuItem>
             ))}
