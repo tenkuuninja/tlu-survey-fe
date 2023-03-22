@@ -66,6 +66,10 @@ const TeacherDashboardPage = () => {
       selector: (row) => row.phone_number,
     },
     {
+      name: 'Số căn cước',
+      selector: (row) => row.citizen_id,
+    },
+    {
       name: 'Giới tính',
       selector: (row) => (row.sex === 1 ? 'Nam' : 'Nữ'),
     },

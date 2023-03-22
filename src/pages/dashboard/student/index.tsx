@@ -45,9 +45,11 @@ const StudentDashboardPage = () => {
   const handleFetchStudent = async () => {
     setLoading(true)
     const params = { ...filter }
-    delete params.grade_level
     if (+params.department === 0) {
       delete params.department
+    }
+    if (+params.grade_level === 0) {
+      delete params.grade_level
     }
     if (+params.class === 0) {
       delete params.class

@@ -55,7 +55,10 @@ const EditDialog = ({ open, onClose, data, onSuccess }) => {
       .string()
       .required('Tên đăng nhập không được để trống')
       .min(8, 'Tên đăng nhập phải có độ dài tối thiếu 8 ký tự'),
-    citizen_id: yup.string().required('Căn cước công dân không được để trống'),
+    citizen_id: yup
+      .string()
+      .required('Căn cước công dân không được để trống')
+      .matches(/^\d+$/g, 'Căn cước công dân phải là số'),
     department_id: yup.mixed().required('Khoa không được để trống'),
     name: yup.string().required('Tên không được để trống'),
     address: yup.string().required('địa chỉ không được để trống'),
