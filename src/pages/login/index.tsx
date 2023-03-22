@@ -36,8 +36,8 @@ const LoginPage = () => {
 
   return (
     <div className="text-neutral-800">
-      <div className="fixed top-1/2 left-1/2 mx-auto flex max-w-[768px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded bg-white shadow-lg shadow-neutral-300">
-        <div className="flex w-[50%] items-center bg-gradient-to-r from-[#67D7F5] to-[#86F7CC]">
+      <div className="top-1/2 left-1/2 mx-auto flex w-screen max-w-[768px] flex-wrap overflow-hidden rounded bg-white shadow-lg shadow-neutral-300 md:fixed md:-translate-x-1/2 md:-translate-y-1/2">
+        <div className="flex items-center bg-gradient-to-r from-[#67D7F5] to-[#86F7CC] md:w-[50%]">
           <img
             className="block w-full p-[36px]"
             src="/assets/login/tlu-60.png"
@@ -45,7 +45,7 @@ const LoginPage = () => {
           />
         </div>
         <form
-          className="w-[50%] px-[36px] py-[56px]"
+          className="px-[36px] py-[56px] md:w-[50%]"
           onSubmit={formik.handleSubmit}
         >
           <h2 className="text-[18px] font-bold uppercase">Đăng nhập</h2>
