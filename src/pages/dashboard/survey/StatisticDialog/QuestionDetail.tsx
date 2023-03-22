@@ -1,19 +1,13 @@
 import { MenuItem, Paper } from '@mui/material'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormGroup from '@mui/material/FormGroup'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import Select from '@mui/material/Select'
-import TextField from '@mui/material/TextField'
-import SurveyApi from 'common/apis/survey'
 import useAuth from 'common/hooks/useAuth'
-import { useFormik } from 'formik'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { toast } from 'react-toastify'
 
 interface QuestionDetailProps {
   survey: any

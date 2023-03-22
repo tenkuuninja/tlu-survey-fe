@@ -1,28 +1,25 @@
-import { Skeleton } from '@mui/material'
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Skeleton,
   Tab,
   Tabs,
 } from '@mui/material'
 import SurveyApi from 'common/apis/survey'
-import SurveyResult from 'common/components/SurveyResult'
 import useAuth from 'common/hooks/useAuth'
 import { useEffect, useState } from 'react'
-import { AiOutlineEdit } from 'react-icons/ai'
 import PersonalDetail from './PersonalDetail'
 import QuestionDetail from './QuestionDetail'
 import Summary from './Summary'
 
 const StatisticDialog = ({ open, onClose, data, onSuccess }) => {
-  const { user, role } = useAuth()
+  const { role } = useAuth()
   const [isLoading, setLoading] = useState(false)
   const [tabActive, setTabActive] = useState(0)
   const [answers, setAnswers] = useState([])
-  const isUpdate = !!data?.id
 
   useEffect(() => {
     const handleGetAnswerData = async () => {
@@ -88,14 +85,6 @@ const StatisticDialog = ({ open, onClose, data, onSuccess }) => {
       <DialogContent>{content}</DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Đóng</Button>
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={isLoading}
-          startIcon={<AiOutlineEdit />}
-        >
-          {isUpdate ? 'Sửa' : 'Thêm'}
-        </Button>
       </DialogActions>
     </Dialog>
   )
