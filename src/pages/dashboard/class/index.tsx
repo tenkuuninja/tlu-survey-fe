@@ -83,7 +83,7 @@ const ClassDashboardPage = () => {
     },
     {
       name: 'Trạng thái',
-      cell: (row) => ['', 'Đang mở', 'Chưa mở', 'Đóng'][row.status] || '',
+      cell: (row) => ['', 'Chưa mở', 'Đang mở', 'Đóng'][row.status] || '',
     },
     {
       name: 'Hành động',

@@ -102,17 +102,13 @@ const StudentDashboardPage = () => {
       cell: (row) => row.department?.code,
     },
     {
-      name: 'Tên khóa',
+      name: 'Khóa',
       cell: (row) => row.grade_level?.name,
+      width: '70px',
     },
     {
       name: 'Tên đăng nhập',
       cell: (row) => row.username,
-    },
-    {
-      name: 'Email',
-      cell: (row) => row.email,
-      minWidth: '200px',
     },
     {
       name: 'Địa chỉ',
@@ -121,6 +117,10 @@ const StudentDashboardPage = () => {
     {
       name: 'Số điện thoại',
       cell: (row) => row.phone_number,
+    },
+    {
+      name: 'Số căn cước',
+      cell: (row) => row.citizen_id,
     },
     {
       name: 'Giới tính',

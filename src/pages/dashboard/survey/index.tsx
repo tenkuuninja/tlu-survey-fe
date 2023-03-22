@@ -58,10 +58,6 @@ const SurveyDashboardPage = () => {
       width: '60px',
     },
     {
-      name: 'Mã',
-      selector: (row) => row.code,
-    },
-    {
       name: 'Tiêu đề',
       selector: (row) => row.title,
     },

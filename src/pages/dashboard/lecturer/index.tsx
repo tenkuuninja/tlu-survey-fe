@@ -54,10 +54,6 @@ const TeacherDashboardPage = () => {
       selector: (row) => row.username,
     },
     {
-      name: 'Email',
-      selector: (row) => row.email,
-    },
-    {
       name: 'Địa chỉ',
       selector: (row) => row.address,
     },
